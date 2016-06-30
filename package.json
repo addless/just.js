@@ -1,0 +1,22 @@
+{
+  "name": "just.js",
+  "version": "0.0.1",
+  "description": "Javascript data binding. Nothing more. Nothing less.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/addless/just.js.git"
+  },
+  "author": "janderson99",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/addless/just.js/issues"
+  },
+  "homepage": "https://github.com/addless/just.js",
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
+}
