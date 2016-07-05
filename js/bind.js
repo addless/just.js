@@ -1,55 +1,46 @@
 (function () {
-    "use strict";
+    'use strict';
 
-    Bindings.add({
-        "div.rule":                                   ["rules"],
-        "div.rule input.name":                        ["rules.id", genericTextInput],
-        "div.rule div.group":                         ["rules.groups"],
-        "div.rule div.sort":                          ["rules.groups.sort", draggableListItem],
-        "div.rule div.sort select.dir":               ["rules.groups.sort.dir", genericNumberInput],
-        "div.rule div.sort input.ascending":          ["rules.groups.sort.dir", ruleSortAscending],
-        "div.rule div.sort select.key":               ["rules.groups.sort.key", genericTextInput],
-        "div.rule div.sort select.key option":        ["fields.", "rules.groups.sort.key", ruleSortKeyOption],
-        "div.rule div.filter":                        ["rules.groups.include..", "rules.groups", criteriaList],
-        "div.rule div.filter select.field":           ["rules.groups.include.", ruleFilterField],
-        "div.rule div.filter select.field option":    ["fields.", "rules.groups.include.", ruleFilterFieldOption],
-        "div.rule div.filter select.operator":        ["rules.groups.include..", genericKeyInput],
-        "div.rule div.filter select.operator option": ["operators.", "rules.groups.include.", "rules.groups.include..", ruleFilterOperatorOption],
-        "div.rule div.filter select.boolean":         ["rules.groups.include.", "rules.groups.include..", "fields", ruleFilterBoolean],
-        "div.rule div.filter input.string":           ["rules.groups.include.", "rules.groups.include..", "fields", ruleFilterString],
-        "div.rule div.filter input.number":           ["rules.groups.include.", "rules.groups.include..", "fields", ruleFilterNumber],
-        "div.rule div.paging input.skip":             ["rules.groups.skip", genericNumberInput],
-        "div.rule div.paging input.limit":            ["rules.groups.limit", genericNumberInput]
-    });
+    Just.bind('rules')                                                                  .to('.rule');
+    Just.bind('rules')                                                                  .to('.separator');
+    Just.bind('rules.id')                                                               .to('.rule .name')                      .as(genericTextInput);
+    Just.bind('rules.groups')                                                           .to('.rule .group');
+    Just.bind('rules.groups.sort')                                                      .to('.rule .sort')                      .as(draggableListItem);
+    Just.bind('rules.groups.sort.dir')                                                  .to('.rule .sort .dir')                 .as(genericNumberInput);
+    Just.bind('rules.groups.sort.dir')                                                  .to('.rule .sort .ascending')           .as(ruleSortAscending);
+    Just.bind('rules.groups.sort.key')                                                  .to('.rule .sort .key')                 .as(genericTextInput);
+    Just.bind('fields.').with('rules.groups.sort.key')                                  .to('.rule .sort .key option')          .as(ruleSortKeyOption);
+    Just.bind('rules.groups.include..')                                                 .to('.rule .filter');
+    Just.bind('rules.groups.include.')                                                  .to('.rule .filter .field')             .as(ruleFilterField);
+    Just.bind('fields.').with('rules.groups.include.')                                  .to('.rule .filter .field option')      .as(ruleFilterFieldOption);
+    Just.bind('rules.groups.include..')                                                 .to('.rule .filter .operator')          .as(genericKeyInput);
+    Just.bind('operators.').with('rules.groups.include.').and('rules.groups.include..') .to('.rule .filter .operator option')   .as(ruleFilterOperatorOption);
+    Just.bind('rules.groups.include.').with('rules.groups.include..').and('fields')     .to('.rule .filter .boolean')           .as(ruleFilterBoolean);
+    Just.bind('rules.groups.include.').with('rules.groups.include..').and('fields')     .to('.rule .filter .string')            .as(ruleFilterString);
+    Just.bind('rules.groups.include.').with('rules.groups.include..').and('fields')     .to('.rule .filter .number')            .as(ruleFilterNumber);
+    Just.bind('rules.groups.skip')                                                      .to('.rule .paging .skip')              .as(genericNumberInput);
+    Just.bind('rules.groups.limit')                                                     .to('.rule .paging .limit')             .as(genericNumberInput);
 
-    function criteriaList(val, key, obj, val2) {
-        return function (elem, path) {
-            var e = val2.$criteria[path] || elem;
-            if (e.parentNode == null) e = elem;
-            val2.$criteria[path] = e;
-        };
-    }
-    
     function ruleSortAscending(val, key, obj) {
-        return function(elem) {
+        return function (elem) {
             elem.checked = val === 1;
-            elem.onchange = function() {
+            elem.onchange = function () {
                 obj[key] = elem.checked ? 1 : -1;
             }
         };
     }
-    
+
     function genericTextInput(val, key, obj) {
-        return function(elem) {
-            elem.value = val != null ? val : "";
-            elem.oninput = function() {
+        return function (elem) {
+            elem.value = val != null ? val : '';
+            elem.oninput = function () {
                 obj[key] = elem.value;
             };
         };
     }
 
     function genericNumberInput(val, key, obj) {
-        return function(elem) {
+        return function (elem) {
             elem.value = parseInt(val) || 0;
             elem.oninput = function () {
                 obj[key] = parseInt(elem.value) || 0;
@@ -59,7 +50,7 @@
 
     function genericKeyInput(val, key, obj) {
         return function(elem) {
-            elem.value = key != null ? key : "";
+            elem.value = key != null ? key : '';
             elem.oninput = function () {
                 obj[elem.value] = val;
                 delete obj[key];
@@ -94,7 +85,7 @@
 
     function ruleFilterString(val, key, obj, val2, key2, obj2, val3) {
         if (val3[key].kind === String) return function(elem) {
-            elem.value = val2 != null ? val2 : "";
+            elem.value = val2 != null ? val2 : '';
             elem.onchange = function() {
                 obj2[key2] = elem.value;
             };
@@ -105,7 +96,7 @@
         if (val3[key].kind === Boolean) return function(elem) {
             elem.value = val2 === true;
             elem.onchange = function() {
-                obj2[key2] = elem.value === "true";
+                obj2[key2] = elem.value === 'true';
             };
         };
     }
@@ -120,8 +111,8 @@
 
     function ruleFilterField(val, key, obj) {
         if (val !== null) return function(elem) {
-            elem.value = key != null ? key : "";
-            // This function renames the target field, while spiting it's nested object accordingly.
+            elem.value = key != null ? key : '';
+            // This function renames the target field, while splitting it's nested object accordingly.
             // If it didn't, the field's nested values would be lost.
             elem.oninput = function () {
                 var o = obj[elem.value] || {};     // get target object
@@ -139,21 +130,23 @@
     }
 
     function draggableListItem(val, key, obj) {
-        return function(elem) {
-            elem.onmousedown = function(e) {
+        return function (elem) {
+            elem.onmousedown = function (e) {
                 if (e.target !== elem) return;
-                addEventListener("mousemove", handleMouseMove, false);
-                addEventListener("mouseup", handleDragEnd, false);
-                addEventListener("blur", handleDragEnd, false);
+                addEventListener('mousemove', handleMouseMove, false);
+                addEventListener('mouseup', handleDragEnd, false);
+                addEventListener('blur', handleDragEnd, false);
                 e.stopPropagation();
                 e.preventDefault();
             };
+
             function handleDragEnd() {
-                removeEventListener("mousemove", handleMouseMove);
-                removeEventListener("mouseup", handleDragEnd);
-                removeEventListener("blur", handleDragEnd);
-                Bindings.render();
+                removeEventListener('mousemove', handleMouseMove);
+                removeEventListener('mouseup', handleDragEnd);
+                removeEventListener('blur', handleDragEnd);
+                Just.render();
             }
+
             function handleMouseMove(e) {
                 var r = elem.getBoundingClientRect();
                 if (obj[key - 1] != null && e.clientY < r.top) {
@@ -167,6 +160,6 @@
                     key += 1;
                 }
             }
-        };
+        }
     }
 }());

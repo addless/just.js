@@ -1,4 +1,4 @@
-var Data = {
+Just.use({
     rules:     [{
         id:     "highest-speed-internet",
         groups: [{
@@ -9,11 +9,10 @@ var Data = {
             ],
             include: [{
                 "longTermPrice.amount": {isMoreOr: 10, isnt: 5, isLessOr: 100},
-                provider: {is: "foobar"}
+                provider:               {is: "foobar"}
             }],
-            $criteria: {},
             limit:   1,
-            skip: 0
+            skip:    0
         }]
     }, {
         id:     "highest-speed-triple-play",
@@ -25,9 +24,8 @@ var Data = {
             include: [
                 {isTriplePlay: {isnt: false}}
             ],
-            $criteria: {},
             limit:   1,
-            skip: 0
+            skip:    0
         }]
     }, {
         id:     "lowest-price-internet",
@@ -37,9 +35,8 @@ var Data = {
                 {key: "internet.downloadSpeed", dir: -1}
             ],
             include: [{isInternet: {is: true}}],
-            $criteria: {},
             limit:   1,
-            skip: 0
+            skip:    0
         }]
     }, {
         id:     "lowest-price-triple-play",
@@ -49,9 +46,8 @@ var Data = {
                 {key: "internet.downloadSpeed", dir: -1}
             ],
             include: [{isTriplePlay: {is: true}}],
-            $criteria: {},
             limit:   1,
-            skip: 0
+            skip:    0
         }]
     }],
     fields:    {
@@ -108,4 +104,4 @@ var Data = {
             fields: ["provider"]
         }
     }
-};
+});

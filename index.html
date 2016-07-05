@@ -3,52 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="js/just.js"></script>
     <script src="js/data.js"></script>
-    <script src="js/ajax.js"></script>
-    <script src="js/bindings.js"></script>
-    <script src="js/rules.component.js"></script>
+    <script src="js/bind.js"></script>
 </head>
 <body>
 <div class="rule">
-        <div>name</div>
-        <input placeholder="name" class="name">
-        <div class="group">
-            <div>criteria</div>
-            <div class="criteria">
-                <div class="filter">
-                    <select title="field" class="field">
-                        <option class="option"></option>
-                    </select>
-                    <select title="operator" class="operator">
-                        <option class="option"></option>
-                    </select>
-                    <select title="boolean" class="boolean">
-                        <option value="true">true</option>
-                        <option value="false">false</option>
-                    </select>
-                    <input placeholder="value" class="string" type="text">
-                    <input placeholder="value" class="number" type="number">
-                </div>
-                <div class="sort">
-                    <select title="key" class="key">
-                        <option class="option"></option>
-                    </select>
-                    <select title="dir" class="dir">
-                        <option value="1">lowest</option>
-                        <option value="-1">highest</option>
-                    </select>
-                    <input type="checkbox" class="ascending" title>
-                    <i style="pointer-events: none">drag</i>
-                </div>
-            </div>
-            <div class="paging">
-                <div>skip</div>
-                <input type="number" placeholder="skip" class="skip">
-                <div>limit</div>
-                <input type="number" placeholder="limit" class="limit">
-            </div>
+    <div>name</div>
+    <input placeholder="name" class="name">
+    <div class="group">
+        <div>criteria</div>
+        <div class="filter">
+            <select title="field" class="field">
+                <option class="option"></option>
+            </select>
+            <select title="operator" class="operator">
+                <option class="option"></option>
+            </select>
+            <select title="boolean" class="boolean">
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+            <input placeholder="value" class="string" type="text">
+            <input placeholder="value" class="number" type="number">
         </div>
-        <hr>
+        <div class="sort">
+            <select title="key" class="key">
+                <option class="option"></option>
+            </select>
+            <select title="dir" class="dir">
+                <option value="1">lowest</option>
+                <option value="-1">highest</option>
+            </select>
+            <input type="checkbox" class="ascending" title>
+            <i style="pointer-events:none">drag</i>
+        </div>
+        <div class="paging">
+            <div>skip</div>
+            <input type="number" placeholder="skip" class="skip">
+            <div>limit</div>
+            <input type="number" placeholder="limit" class="limit">
+        </div>
     </div>
+</div>
+<div class="separator">- - - - - - - - </div>
 </body>
 </html>
