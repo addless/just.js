@@ -30,17 +30,19 @@ var Just = (function() {
 
     return Object.create(null, {
         use:    {value: setDataRoot},
-        bind:   {value: getDataPath},
+        bind:   {value: setDataPath},
         render: {value: doRender}
     });
 
-    // throttles the render so that we don't get back-to-back renders unnecessarily.
+    // This function de-bounces the view render.
+    // Without it, we'd be unable to avoid unnecessary back-to-back rendering.
     function doRender() {
         clearTimeout(doRender.$timeout);
         doRender.$timeout = setTimeout(doRenderRecurse, 80, [], document.body);
     }
 
-    //
+    // This function recursively render's the view.
+    // Without it, we'd be unable to render nested elements.
     function doRenderRecurse(memo, node) {
         var d0, d1, d2, d3;
         var i0, i1, i2, i3;
@@ -71,13 +73,14 @@ var Just = (function() {
 
         for (i0 in d0) group: for (s in e) for (i1 in d1) for (i2 in d2) for (i3 in d3) {
             f = selectorToFactory[s](d0[i0].$val, d0[i0].$key, d0[i0].$obj, d1[i1].$val, d1[i1].$key, d1[i1].$obj, d2[i2].$val, d2[i2].$key, d2[i2].$obj, d3[i3].$val, d3[i3].$key, d3[i3].$obj);
+            e[s][0].$original = e[s][0].$original || e[s][0].cloneNode(true);
             if (f) evalListItem(e[s][i[s]] || newListItem());
             if (!f) continue;
             continue group;
         }
 
         function newListItem() {
-            var c = e[s][0].cloneNode(true);
+            var c = e[s][0].$original.cloneNode(true);
             return n.parentNode.insertBefore(c, n.nextElementSibling);
         }
 
@@ -139,10 +142,14 @@ var Just = (function() {
         };
     }
 
+    // This function sets the root data node that will be used during rendering.
+    // Without it, we're unable to define the data that will appear within the view.
     function setDataRoot(data) {
         getData = getDataRecurse.bind(undefined, 0, undefined, data);
     }
 
+    // This function retrieves data recursively.
+    // Without it, we're unable to resolved dot-notation data paths.
     function getDataRecurse(i, obj, val, memo, path, out) {
         switch (true) {
         case val == null:
@@ -186,16 +193,18 @@ var Just = (function() {
         }
     }
 
-    function getDataPath(path) {
+    // This function adds a new data binding.
+    // Without it, we're unable to define relationships between data and view elements.
+    function setDataPath(path) {
         var paths = [path];
-        return {to: getSelector, with: addPath};
+        return {to: setSelector, with: addPath};
 
         function addPath(path) {
             paths.push(path);
-            return {to: getSelector, and: addPath};
+            return {to: setSelector, and: addPath};
         }
 
-        function getSelector(selector) {
+        function setSelector(selector) {
             if (selectorToPath[selector]) throw Error("CSS selector cannot be reused: " + selector);
             pathToArg0[paths] = paths[0] ? paths[0].split(".") : [];
             pathToArg1[paths] = paths[1] ? paths[1].split(".") : [];
