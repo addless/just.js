@@ -1,95 +1,101 @@
 var Just = (function() {
     "use strict";
 
-    // Retrieves data.  This placeholder is redefined on-the-fly.
-    var getData = function(){ return [] };
-    // Cross browser Element.matches implementation; see https://goo.gl/3n6CSR
-    var matchesSelector = xBrowserMatchFunc();
-    // Each key is a CSS selector, and each value is an array of data paths.
-    var pathToPathList = {};
-    // Each key is a CSS selector, and each value is a factory function.
-    var selectorToFactory = {};
-    // Each key is a data path, and each value is an object where each key is a CSS selector.
-    var pathToSelector = {};
-    // Each key is a CSS selector, and each value is a data path.
-    var selectorToPath = {};
-    // Each key is a data path, and each value is an array of data path tokens.
-    var pathToArg0 = {};
-    // Each key is a data path, and each value is an array of data path tokens.
-    var pathToArg1 = {};
-    // Each key is a data path, and each value is an array of data path tokens.
-    var pathToArg2 = {};
-    // Each key is a data path, and each value is an array of data path tokens.
-    var pathToArg3 = {};
-    // Each item is a CSS selector.
-    var selectors = [];
+    var matches = xBrowserMatchFunc(); // Cross browser Element.matches implementation; see https://goo.gl/3n6CSR
+    var selectorToFactory = {};        // Each key is a CSS selector, and each value is a factory function.
+    var pathToSelector = {};           // Each key is a data path, and each value is an object where each key is a CSS selector.
+    var selectorToPath = {};           // Each key is a CSS selector, and each value is a data path.
+    var getterNames = [];              // Each item is a getter declaration's name.
+    var getterPaths = {};              // Each key is a getter declaration's name, and each value is it's path.
+    var getterFuncs = {};              // Each key is a getter declaration's name, and each value is it's function.
+    var pathToArg0 = {};               // Each key is a data path, and each value is an array of data path tokens.
+    var pathToArg1 = {};               // Each key is a data path, and each value is an array of data path tokens.
+    var pathToArg2 = {};               // Each key is a data path, and each value is an array of data path tokens.
+    var pathToArg3 = {};               // Each key is a data path, and each value is an array of data path tokens.
+    var selectors = [];                // Each item is a CSS selector.
+    var data = {};                     // Root object for all data paths.
 
     addEventListener("DOMContentLoaded", doRender, false);
     addEventListener("change", handleInput, false);
     addEventListener("input", handleInput, false);
 
     return Object.create(null, {
+        get:    {value: setGetterPath},
         use:    {value: setDataRoot},
         bind:   {value: setDataPath},
-        render: {value: doRender}
+        render: {value: queueRender}
     });
 
     // This function de-bounces the view render.
     // Without it, we'd be unable to avoid unnecessary back-to-back rendering.
+    function queueRender() {
+        clearTimeout(queueRender.$timeout);
+        queueRender.$timeout = setTimeout(doRender, 80, true);
+    }
+
+    // This function executes the view render.
+    // Without it, we'd be unable to initiate the rendering process.
     function doRender() {
-        clearTimeout(doRender.$timeout);
-        doRender.$timeout = setTimeout(doRenderRecurse, 80, [], document.body);
+        execGetters();
+        renderRecursively([], document.body);
+    }
+
+    // This function executes each getter declaration.
+    // Without it, we'd be unable to mutate the data before displaying it in the view.
+    function execGetters() {
+        var i = 0;
+
+        for (i; i < getterNames.length; i++) {
+            getDataRecurse(0, null, data, [], getterPaths[getterNames[i]].slice(), getterFuncs[getterNames[i]]);
+        }
     }
 
     // This function recursively render's the view.
     // Without it, we'd be unable to render nested elements.
-    function doRenderRecurse(memo, node) {
-        var d0, d1, d2, d3;
-        var i0, i1, i2, i3;
-        var n = node;
-        var e = {};
-        var i = {};
-        var s;
-        var p;
-        var f;
+    function renderRecursively(memo, node) {
+        var d0, i0, d1, i1, d2, i2, d3, i3;
+        var n = node; // The target sibling element
+        var e = {};   // Each key is a selector, and each value is an array of associated elements
+        var i = {};   // Each key is a selector, and each value is the number of rendered associated elements.
+        var s;        // A selector
+        var p;        // A data path
+        var f;        // A function
 
         for (; node; node = node.nextElementSibling) {
-            s = whichSelector(node, selectors);
-            if (!s && !p) doRenderRecurse(memo, node.firstElementChild);
-            if (p && p !== selectorToPath[s]) break;
-            if (!p) p = selectorToPath[s];
-            if (!s) continue;
+            s = getMatchingSelector(node, selectors);
+            if (s == null && p == null) renderRecursively(memo, node.firstElementChild);
+            if (p != null && p !== selectorToPath[s]) break;
+            if (p == null) p = selectorToPath[s];
+            if (s == null) continue;
             e[s] = e[s] || [];
             e[s].push(node);
             i[s] = 0;
         }
 
-        if (p) {
-            d0 = getData(memo, pathToArg0[p].concat(), []);
-            d1 = getData(memo, pathToArg1[p].concat(), []);
-            d2 = getData(memo, pathToArg2[p].concat(), []);
-            d3 = getData(memo, pathToArg3[p].concat(), []);
+        if (p != null) {
+            d0 = getDataRecurse(0, null, data, memo, pathToArg0[p].slice(), []);
+            d1 = getDataRecurse(0, null, data, memo, pathToArg1[p].slice(), []);
+            d2 = getDataRecurse(0, null, data, memo, pathToArg2[p].slice(), []);
+            d3 = getDataRecurse(0, null, data, memo, pathToArg3[p].slice(), []);
         }
 
         for (i0 in d0) group: for (s in e) for (i1 in d1) for (i2 in d2) for (i3 in d3) {
-            f = selectorToFactory[s](d0[i0].$val, d0[i0].$key, d0[i0].$obj, d1[i1].$val, d1[i1].$key, d1[i1].$obj, d2[i2].$val, d2[i2].$key, d2[i2].$obj, d3[i3].$val, d3[i3].$key, d3[i3].$obj);
+            f = selectorToFactory[s](d0[i0].$key, d0[i0].$obj, d1[i1].$key, d1[i1].$obj, d2[i2].$key, d2[i2].$obj, d3[i3].$key, d3[i3].$obj);
             e[s][0].$original = e[s][0].$original || e[s][0].cloneNode(true);
-            if (f) evalListItem(e[s][i[s]] || newListItem());
-            if (!f) continue;
+            if (f != null) evalListItem();
+            if (f == null) continue;
             continue group;
         }
 
-        function newListItem() {
-            var c = e[s][0].$original.cloneNode(true);
-            return n.parentNode.insertBefore(c, n.nextElementSibling);
-        }
+        function evalListItem() {
+            var c = e[s][i[s]] || e[s][0].$original.cloneNode(true);
 
-        function evalListItem(elem) {
-            f(elem);
-            n = elem;
-            i[s] += 1;
-            elem.style.display = "";
-            doRenderRecurse(d0[i0].$path, elem.firstElementChild);
+            f(c);
+            c.style.display = "";
+            n.parentNode.insertBefore(c, n.nextSibling);
+            renderRecursively(d0[i0].$memo, c.firstElementChild);
+            i[s] += 1; // increment the number of rendered elements associated with this selector
+            n = c;     // adopt the current node as the target sibling for the next cycle
         }
 
         for (s in e) while (n = e[s][i[s]]) {
@@ -99,7 +105,7 @@ var Just = (function() {
         }
 
         if (node) {
-            doRenderRecurse(memo, node);
+            renderRecursively(memo, node);
         }
     }
 
@@ -107,19 +113,17 @@ var Just = (function() {
     // Without it, we're unable to re-render in response to user input.
     function handleInput(event) {
         var n = "on" + event.type;
-        if (!event.target[n]) return;
-        clearTimeout(doRender.$wait);
-        doRender.$wait = setTimeout(doRender, 80);
+        if (event.target[n]) doRender();
     }
 
     // This function returns the CSS selector within the given list that matches the given DOM node.
     // Without it, we're unable to quickly determine whichSelector CSS selector matches a given node.
-    function whichSelector(node, selectors) {
+    function getMatchingSelector(node, selectors) {
         var s = selectors.concat();
 
         while (s.length > 0) {
             selectors = s.splice(s.length / 2);
-            if (!matchesSelector(node, selectors)) continue;
+            if (!matches(node, selectors)) continue;
             if (!selectors[1]) return selectors[0];
             s = selectors;
         }
@@ -144,9 +148,7 @@ var Just = (function() {
 
     // This function sets the root data node that will be used during rendering.
     // Without it, we're unable to define the data that will appear within the view.
-    function setDataRoot(data) {
-        getData = getDataRecurse.bind(undefined, 0, undefined, data);
-    }
+    function setDataRoot(obj) { data = obj }
 
     // This function retrieves data recursively.
     // Without it, we're unable to resolved dot-notation data paths.
@@ -161,7 +163,8 @@ var Just = (function() {
             break;
 
         case i === path.length:
-            out.push({$key: path[i - 1], $val: val, $obj: obj, $path: path});
+            if (typeof out === "function") return out(path[i - 1], obj);
+            out.push({$key: path[i - 1], $obj: obj, $memo: path});
             break;
 
         case path[i] === "":
@@ -179,11 +182,9 @@ var Just = (function() {
         return out;
 
         function getEachKey(type) {
+            var n, p;
             var h = val.hasOwnProperty(memo[i]);
-            var k, n, p;
-
-            if (!h) k = Object.keys(val);
-            if (h) k = [memo[i]];
+            var k = h ? [memo[i]] : Object.keys(val);
 
             for (n = 0; n < k.length; n++) {
                 p = path.concat();
@@ -224,6 +225,20 @@ var Just = (function() {
             function getFactory(factory) {
                 selectorToFactory[selector] = factory;
             }
+        }
+    }
+
+    // This function defines a data pre-processor declaration.
+    // Without it, we're unable to pre-process data before displaying it within the view.
+    function setGetterPath(path) {
+        return {as: setGetterFunc};
+
+        function setGetterFunc(func) {
+            if (getterPaths[path]) throw Error("Getter path cannot be reused: " + path);
+            getterPaths[path] = path.split(".");
+            getterNames = Object.keys(getterPaths);
+            getterNames.sort().reverse();
+            getterFuncs[path] = func;
         }
     }
 }());
