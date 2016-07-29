@@ -163,8 +163,7 @@ var Just = (function() {
             break;
 
         case i === path.length:
-            if (typeof out === "function") return out(path[i - 1], obj);
-            out.push({$key: path[i - 1], $obj: obj, $memo: path});
+            applyOutput();
             break;
 
         case path[i] === "":
@@ -180,6 +179,11 @@ var Just = (function() {
         }
 
         return out;
+
+        function applyOutput() {
+            if (typeof out === "function") return out(path[i - 1], obj, path.join("."));
+            if (out instanceof Array) out.push({$key: path[i - 1], $obj: obj, $memo: path});
+        }
 
         function getEachKey(type) {
             var n, p;
