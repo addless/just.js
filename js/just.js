@@ -20,10 +20,10 @@ var Just = (function() {
     addEventListener("input", handleInput, false);
 
     return Object.create(null, {
-        get:    {value: setGetterPath},
-        use:    {value: setDataRoot},
-        bind:   {value: setDataPath},
-        render: {value: queueRender}
+        get:     {value: setGetterPath},
+        use:     {value: setDataRoot},
+        forEach: {value: setDataPath},
+        render:  {value: queueRender}
     });
 
     // This function de-bounces the view render.
@@ -37,7 +37,7 @@ var Just = (function() {
     // Without it, we'd be unable to initiate the rendering process.
     function doRender() {
         execGetters();
-        renderRecursively([], document.body);
+        renderRecursively({}, document.body);
     }
 
     // This function executes each getter declaration.
@@ -73,10 +73,10 @@ var Just = (function() {
         }
 
         if (p != null) {
-            d0 = getDataRecurse(0, null, data, memo, pathToArg0[p].slice(), []);
-            d1 = getDataRecurse(0, null, data, memo, pathToArg1[p].slice(), []);
-            d2 = getDataRecurse(0, null, data, memo, pathToArg2[p].slice(), []);
-            d3 = getDataRecurse(0, null, data, memo, pathToArg3[p].slice(), []);
+            d0 = getDataRecurse(0, null, data, memo[pathToArg0[p]] || memo.$default || [], pathToArg0[p].slice(), []);
+            d1 = getDataRecurse(0, null, data, memo[pathToArg1[p]] || memo.$default || [], pathToArg1[p].slice(), []);
+            d2 = getDataRecurse(0, null, data, memo[pathToArg2[p]] || memo.$default || [], pathToArg2[p].slice(), []);
+            d3 = getDataRecurse(0, null, data, memo[pathToArg3[p]] || memo.$default || [], pathToArg3[p].slice(), []);
         }
 
         for (i0 in d0) group: for (s in e) for (i1 in d1) for (i2 in d2) for (i3 in d3) {
@@ -92,8 +92,14 @@ var Just = (function() {
 
             f(c);
             c.style.display = "";
+            var m = Object.create(memo);
+            m.$default = d0[i0].$memo;
+            m[pathToArg0[p]] = d0[i0].$memo;
+            m[pathToArg1[p]] = d1[i1].$memo;
+            m[pathToArg2[p]] = d2[i2].$memo;
+            m[pathToArg3[p]] = d3[i3].$memo;
             n.parentNode.insertBefore(c, n.nextSibling);
-            renderRecursively(d0[i0].$memo, c.firstElementChild);
+            renderRecursively(m, c.firstElementChild);
             i[s] += 1; // increment the number of rendered elements associated with this selector
             n = c;     // adopt the current node as the target sibling for the next cycle
         }
@@ -113,7 +119,7 @@ var Just = (function() {
     // Without it, we're unable to re-render in response to user input.
     function handleInput(event) {
         var n = "on" + event.type;
-        if (event.target[n]) doRender();
+        if (event.target[n]) queueRender();
     }
 
     // This function returns the CSS selector within the given list that matches the given DOM node.
@@ -202,11 +208,11 @@ var Just = (function() {
     // Without it, we're unable to define relationships between data and view elements.
     function setDataPath(path) {
         var paths = [path];
-        return {to: setSelector, with: addPath};
+        return {bindTo: setSelector, forEach: addPath};
 
         function addPath(path) {
             paths.push(path);
-            return {to: setSelector, and: addPath};
+            return {bindTo: setSelector, forEach: addPath};
         }
 
         function setSelector(selector) {
