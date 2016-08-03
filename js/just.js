@@ -37,7 +37,7 @@ var Just = (function() {
     // Without it, we'd be unable to initiate the rendering process.
     function doRender() {
         execGetters();
-        renderRecursively({}, document.body);
+        renderRecursively({$default: []}, document.body);
     }
 
     // This function executes each getter declaration.
@@ -73,10 +73,10 @@ var Just = (function() {
         }
 
         if (p != null) {
-            d0 = getDataRecurse(0, null, data, memo[pathToArg0[p]] || memo.$default || [], pathToArg0[p].slice(), []);
-            d1 = getDataRecurse(0, null, data, memo[pathToArg1[p]] || memo.$default || [], pathToArg1[p].slice(), []);
-            d2 = getDataRecurse(0, null, data, memo[pathToArg2[p]] || memo.$default || [], pathToArg2[p].slice(), []);
-            d3 = getDataRecurse(0, null, data, memo[pathToArg3[p]] || memo.$default || [], pathToArg3[p].slice(), []);
+            d0 = getDataRecurse(0, null, data, memo[pathToArg0[p]] || memo.$default, pathToArg0[p].slice(), []);
+            d1 = getDataRecurse(0, null, data, memo[pathToArg1[p]] || memo.$default, pathToArg1[p].slice(), []);
+            d2 = getDataRecurse(0, null, data, memo[pathToArg2[p]] || memo.$default, pathToArg2[p].slice(), []);
+            d3 = getDataRecurse(0, null, data, memo[pathToArg3[p]] || memo.$default, pathToArg3[p].slice(), []);
         }
 
         for (i0 in d0) group: for (s in e) for (i1 in d1) for (i2 in d2) for (i3 in d3) {
@@ -89,10 +89,10 @@ var Just = (function() {
 
         function evalListItem() {
             var c = e[s][i[s]] || e[s][0].$original.cloneNode(true);
+            var m = Object.create(memo);
 
             f(c);
             c.style.display = "";
-            var m = Object.create(memo);
             m.$default = d0[i0].$memo;
             m[pathToArg0[p]] = d0[i0].$memo;
             m[pathToArg1[p]] = d1[i1].$memo;

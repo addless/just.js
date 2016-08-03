@@ -1,9 +1,10 @@
 (function () {
     'use strict';
 
-    Just.forEach('rules.list')                                                                              .bindTo('.rule');
+    Just.forEach('rules.list')                                                                              .bindTo('.js-rule');
     Just.forEach('rules.list')                                                                              .bindTo('.separator');
     Just.forEach('rules.list.id')                                                                           .bindTo('.rule .name')                    .as(genericTextInput);
+    Just.forEach('rules.list.id')                                                                           .bindTo('.name')                          .as(genericTextInput);
     Just.forEach('rules.list.groups')                                                                       .bindTo('.rule .group');
     Just.forEach('rules.list.groups.sort')                                                                  .bindTo('.rule .sort')                    .as(draggableListItem);
     Just.forEach('rules.list.groups.sort.dir')                                                              .bindTo('.rule .sort .dir')               .as(genericNumberInput);
@@ -21,7 +22,7 @@
     Just.forEach('rules.list.groups.skip')                                                                  .bindTo('.rule .paging .skip')            .as(genericNumberInput);
     Just.forEach('rules.list.groups.limit')                                                                 .bindTo('.rule .paging .limit')           .as(genericNumberInput);
     Just.forEach('listA').forEach('listB').forEach('listC').forEach('listD')                                .bindTo('.list-test')                     .as(listTest);
-    Just.forEach('listA').forEach('listB').forEach('listC').forEach('listD')                                .bindTo('.list-test .list-test-inner')    .as(listTestInner);
+    Just.forEach('listA').forEach('listB').forEach('listC').forEach('listD')                                .bindTo('.list-test-inner')               .as(listTestInner);
 
     function listTest(key, obj, key2, obj2, key3, obj3, key4, obj4) {
         var r = Math.random() * Math.pow(4, 3) | 0;
