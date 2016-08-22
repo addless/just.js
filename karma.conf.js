@@ -47,6 +47,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
+          { pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false },
           { pattern: 'js/ajax.js', watched: true },
           'spec/**/*.js'
         ],
@@ -102,8 +103,11 @@ module.exports = function(config) {
 
 
         phantomjsLauncher: {
-            // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
-            exitOnResourceError: false
+            // Have phantomjs exit if a ResourceError is encountered
+            // (useful if karma exits without killing phantom).
+            // However, very brittle, things like a 404 on an image tag
+            // will cause the browser to crash
+            exitOnResourceError: true
         },
 
 

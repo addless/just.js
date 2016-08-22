@@ -8,8 +8,8 @@
     "test:local-fast": "BV_TEST_MODE=local-fast karma start",
     "test:local-all": "BV_TEST_MODE=local-all karma start",
     "test:local-selenium-grid": "BV_TEST_MODE=local-sg karma start",
-    "test:dev" : "npm run test:local-fast",
-    "test:lsg" : "npm run test:local-selenium-grid"
+    "test:dev": "npm run test:local-fast",
+    "test:lsg": "npm run test:local-selenium-grid"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/addless/just.js#readme",
   "devDependencies": {
+    "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.4.1",
     "karma": "^1.2.0",
     "karma-chrome-launcher": "^2.0.0",
