@@ -47,9 +47,11 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-          { pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false },
-          { pattern: 'js/ajax.js', watched: true },
-          'spec/**/*.js'
+            { pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false },
+            'js/ajax.js',
+            'js/just.js',
+            'spec/**/*.js',
+            'spec/fixtures/*.html'
         ],
 
 
@@ -61,6 +63,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'spec/fixtures/*.html': ['html2js']
         },
 
 
@@ -80,7 +83,7 @@ module.exports = function(config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_INFO,
 
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -105,8 +108,8 @@ module.exports = function(config) {
         phantomjsLauncher: {
             // Have phantomjs exit if a ResourceError is encountered
             // (useful if karma exits without killing phantom).
-            // However, very brittle, things like a 404 on an image tag
-            // will cause the browser to crash
+            // However this is very brittle, things like a 404 on an image tag
+            // will cause the browser to crash.
             exitOnResourceError: true
         },
 
@@ -129,6 +132,7 @@ module.exports = function(config) {
                 browserName: 'chrome',
             }
         }
+
 
     });
 }
