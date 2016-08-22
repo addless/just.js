@@ -1,6 +1,27 @@
 // Karma configuration
 // Generated on Fri Aug 19 2016 16:29:11 GMT-0500 (CDT)
 
+// this one is set to fallback to using the "standard" NODE_ENV
+var isCI = (process.env.BV_TEST_MODE === 'ci' || process.env.NODE_ENV === 'test');
+// these other modes use a custom environment variable so we can separate test mode from environment
+var isLocalFast = (process.env.BV_TEST_MODE === 'local-fast');
+var isLocalAll = (process.env.BV_TEST_MODE === 'local-all');
+var isLocalSeleniumGrid = (process.env.BV_TEST_MODE === 'local-sg');
+
+// make the browser list and other config different for different environments
+var browsers = ['PhantomJS'];
+var singleRun = false;
+
+if ( isCI ) {
+    singleRun = true;
+} else if ( isLocalFast ) {
+    // noop for now, defaults are good here
+} else if ( isLocalAll ) {
+    browsers = ['Chrome','Firefox','PhantomJS'];
+} else if ( isLocalSeleniumGrid ) {
+    // TODO: add this once local selenium grid is set up
+}
+
 module.exports = function(config) {
   config.set({
 
@@ -55,12 +76,12 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: browsers,
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
+    singleRun: singleRun,
 
     // Concurrency level
     // how many browser should be started simultaneous

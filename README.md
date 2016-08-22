@@ -36,8 +36,12 @@ js/bind.js
 ### Setup
 
 1. Install [node.js v4.4.3](https://nodejs.org/ "node.js")
-2. Install the necessary dependencies by running in the shell:`npm install`.
+2. Install the necessary dependencies by running in the shell:`npm install`
+3. Install phantomjs  
+	On Mac OSX with homebrew: `brew install phantomjs`  
+	On Windows, follow instructions here: `http://phantomjs.org/download.html`  
+4. To use the command `npm run test:local-all` you will need to install Chrome and Firefox locally
 
 ### Testing
 
-Run `npm test`
+Run `npm test:dev`
