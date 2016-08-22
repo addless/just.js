@@ -3,6 +3,13 @@
 
 module.exports = function(config) {
 
+    // this will determine the current IP, needed for config when
+    // connecting to Selenium Grid
+    // got this from:
+    // http://stackoverflow.com/questions/10750303/how-can-i-get-the-local-ip-address-in-node-js
+    var ifs = require('os').networkInterfaces();
+    var myIp = Object.keys(ifs).map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0]).filter(x => x)[0].address;
+
     // this one is set to fallback to using the "standard" NODE_ENV
     var isCI = (process.env.BV_TEST_MODE === 'ci' || process.env.NODE_ENV === 'test');
     // these other modes use a custom environment variable so we can separate test mode from environment
@@ -21,10 +28,13 @@ module.exports = function(config) {
     } else if ( isLocalAll ) {
         browsers = ['Chrome','Firefox','PhantomJS'];
     } else if ( isLocalSeleniumGrid ) {
-        // TODO: add this once local selenium grid is set up
+        browsers = ['sgFirefox','sgChrome'];
     }
 
     config.set({
+
+        // this is where the karma web server responds from
+        hostname: myIp,
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -84,14 +94,36 @@ module.exports = function(config) {
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: singleRun,
 
+
         // Concurrency level
         // how many browser should be started simultaneous
         concurrency: Infinity,
 
+
         phantomjsLauncher: {
             // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
             exitOnResourceError: true
+        },
+
+
+        customLaunchers: {
+            'sgFirefox': {
+                base: 'WebDriver',
+                config: {
+                  hostname: 'localhost',
+                  port: 4444
+                },
+                browserName: 'firefox',
+            },
+            'sgChrome': {
+                base: 'WebDriver',
+                config: {
+                  hostname: 'localhost',
+                  port: 4444
+                },
+                browserName: 'chrome',
+            }
         }
 
-    })
+    });
 }
