@@ -22,7 +22,8 @@ js/bind.js
 <script src="js/bind.js"></script>
 ```
 
-## Refactor the example files to work with your application
+### Refactor the example files to work with your application
+
 * You should not need to change ajax.js or just.js at all.
 * Add one or more data sources to data.js using the Just.use() method. The object you pass to use() defines an "alias" for this data source, which will be available to the bind() method.
 * Update get.js to call Just.get() for one or more data sources. Assuming you are requesting data from a server end point, you will most likely use .as(remoteResource). You should not need to change the private method remoteResource()
@@ -33,6 +34,8 @@ js/bind.js
 
 ## Development
 
+Of course start by cloning this repository to your workstation. You will need node.js and a system install of PhantomJS to run the basic tests. Other than that, most of the dependencies are the usual local node_modules.
+
 ### Setup
 
 1. Install [node.js v4.4.3](https://nodejs.org/ "node.js")
@@ -40,9 +43,30 @@ js/bind.js
 3. Install phantomjs  
 	On Mac OSX with homebrew: `brew install phantomjs`  
 	On Windows, follow instructions here: `http://phantomjs.org/download.html`  
-4. To use the command `npm run test:local-all` you will need to install Chrome and Firefox locally
-5. To use the command `npm run test:local-selenium-grid` you will need to have Docker installed, and run `docker-compose up -d` before starting the tests
+4. Install Chrome and Firefox locally to use the command `npm run test:local-all`
+5. Install Docker and run `docker-compose up -d` to use the command `npm run test:local-selenium-grid`
 
-### Testing
+### Testing `npm test:dev`
 
-Run `npm test:dev`
+The most useful command for local develpment is to run `npm test:dev`, this will start PhantomJS locally and watch the library files and your test specs. Tests will be re-run whenever a file changes.
+
+### Useful links, tips and documentation
+
+#### Karma
+
+#### Jasmine
+
+#### jasmine-ajax
+
+#### jasmine.clock
+
+#### karma-html2js-preprocessor
+
+### NPM script reference
+
+* `npm test` meant for CI, does a single run using local PhantomJS
+* `npm run test:local-fast` meant for live use while developing, uses local PhantomJS and watches files for changes
+* `npm run test:local-all` runs PhantomJS, Chrome and Firefox locally, watches files
+* `npm run test:local-selenium-grid` runs Chrome and Firefox in the local Docker Selenium Grid instance, watches files
+* `npm run test:dev` alias for `npm run test:local-fast`
+* `npm run test:lsg` alias for `npm run test:local-selenium-grid`
