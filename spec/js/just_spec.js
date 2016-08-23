@@ -1,6 +1,6 @@
 describe('Just', function() {
 
-    describe('#bind', function() {
+    describe('Just#bind', function() {
         var duplicatedNodes;
 
         // Would like to use beforeEach, but not sure how to "reset" Just context
