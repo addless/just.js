@@ -1,0 +1,36 @@
+{
+  "name": "just.js",
+  "version": "0.0.2",
+  "description": "Javascript data binding. Nothing more. Nothing less.",
+  "main": "index.html",
+  "scripts": {
+    "test": "BV_TEST_MODE=ci karma start",
+    "test:local-fast": "BV_TEST_MODE=local-fast karma start",
+    "test:local-all": "BV_TEST_MODE=local-all karma start",
+    "test:local-selenium-grid": "BV_TEST_MODE=local-sg karma start",
+    "test:dev": "npm run test:local-fast",
+    "test:lsg": "npm run test:local-selenium-grid"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/addless/just.js.git"
+  },
+  "author": "janderson99",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/addless/just.js/issues"
+  },
+  "homepage": "https://github.com/addless/just.js#readme",
+  "devDependencies": {
+    "jasmine-ajax": "^3.2.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.2.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-cli": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-html2js-preprocessor": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "karma-webdriver-launcher": "^1.0.4"
+  }
+}

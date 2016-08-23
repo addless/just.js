@@ -1,0 +1,20 @@
+# got this from here:
+# http://testdetective.com/selenium-grid-with-docker/
+seleniumhub:
+  image: selenium/hub
+  ports:
+    - 4444:4444
+
+firefoxnode:
+  image: selenium/node-firefox
+  ports:
+    - 5900
+  links:
+    - seleniumhub:hub
+
+chromenode:
+  image: selenium/node-chrome
+  ports:
+    - 5900
+  links:
+    - seleniumhub:hub
