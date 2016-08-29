@@ -64,5 +64,9 @@ Just.use({
             label:  "starts with",
             fields: ["provider"]
         }
-    }
+    },
+    listA: ["A0", "A1", "A2", "A3", "A4"],
+    listB: ["B0", "B1", "B2", "B3", "B4"],
+    listC: ["C0", "C1", "C2", "C3", "C4"],
+    listD: ["D0", "D1", "D2", "D3", "D4"]
 });
