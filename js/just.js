@@ -153,6 +153,8 @@ var Just = (function() {
     //       data earlier than the bind.js loading process.  Subsequent calls WILL OVERWRITE
     //       existing data keys, so key name management is up to the developer
     function setDataRoot(obj) {
+        // TODO: Is `data` ever null? If not we can remove this check.
+        // TODO: make this function recursive; e.g. {x:{y:1}} + {x:{z:1}} => {x:{y:1,z:1}}
         if (!data) {
             data = obj;
         } else {
