@@ -148,7 +148,21 @@ var Just = (function() {
 
     // This function sets the root data node that will be used during rendering.
     // Without it, we're unable to define the data that will appear within the view.
-    function setDataRoot(obj) { data = obj }
+    // NOTE: This has been updated to allow for additive overwrites if Just.use is called
+    //       multiple times in the page. This is to allow for modules that load their own
+    //       data earlier than the bind.js loading process.  Subsequent calls WILL OVERWRITE
+    //       existing data keys, so key name management is up to the developer
+    function setDataRoot(obj) {
+        // TODO: Is `data` ever null? If not we can remove this check.
+        // TODO: make this function recursive; e.g. {x:{y:1}} + {x:{z:1}} => {x:{y:1,z:1}}
+        if (!data) {
+            data = obj;
+        } else {
+            for (var key in obj) {
+                data[key] = obj[key];
+            }
+        }
+    }
 
     // This function retrieves data recursively.
     // Without it, we're unable to resolved dot-notation data paths.
