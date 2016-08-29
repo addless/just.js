@@ -54,9 +54,9 @@ var Just = (function() {
     // Without it, we'd be unable to render nested elements.
     function renderRecursively(memo, node) {
         var d0, i0, d1, i1, d2, i2, d3, i3;
-        var n = node; // The target sibling element
         var e = {};   // Each key is a selector, and each value is an array of associated elements
         var i = {};   // Each key is a selector, and each value is the number of rendered associated elements.
+        var n; // The target sibling element
         var s;        // A selector
         var p;        // A data path
         var f;        // A function
@@ -69,6 +69,7 @@ var Just = (function() {
             if (s == null) continue;
             e[s] = e[s] || [];
             e[s].push(node);
+            n = n || node;
             i[s] = 0;
         }
 
