@@ -1,60 +1,17 @@
-var Data = {
-    rules:     [{
-        id:     "highest-speed-internet",
-        groups: [{
-            sort:    [
-                {key: "internet.downloadSpeed", dir: -1},
-                {key: "longTermPrice.amount", dir: -1},
-                {key: "longTermPrice.amount", dir: 1}
-            ],
-            include: [{
-                "longTermPrice.amount": {isMoreOr: 10, isnt: 5, isLessOr: 100},
-                provider: {is: "foobar"}
-            }],
-            $criteria: {},
-            limit:   1,
-            skip: 0
-        }]
-    }, {
-        id:     "highest-speed-triple-play",
-        groups: [{
-            sort:    [
-                {key: "internet.downloadSpeed", dir: -1},
-                {key: "longTermPrice.amount", dir: 1}
-            ],
-            include: [
-                {isTriplePlay: {isnt: false}}
-            ],
-            $criteria: {},
-            limit:   1,
-            skip: 0
-        }]
-    }, {
-        id:     "lowest-price-internet",
-        groups: [{
-            sort:    [
-                {key: "longTermPrice.amount", dir: 1},
-                {key: "internet.downloadSpeed", dir: -1}
-            ],
-            include: [{isInternet: {is: true}}],
-            $criteria: {},
-            limit:   1,
-            skip: 0
-        }]
-    }, {
-        id:     "lowest-price-triple-play",
-        groups: [{
-            sort:    [
-                {key: "longTermPrice.amount", dir: 1},
-                {key: "internet.downloadSpeed", dir: -1}
-            ],
-            include: [{isTriplePlay: {is: true}}],
-            $criteria: {},
-            limit:   1,
-            skip: 0
-        }]
-    }],
-    fields:    {
+Just.use({
+    rules:            {
+        url:    "./json/rules.json",
+        method: "GET",
+        status: 409,
+        list:   []
+    },
+    users:            {
+        url:    "./json/users.json",
+        method: "GET",
+        status: 409,
+        list:   []
+    },
+    fields:           {
         "isInternet":             {
             filterBy: true,
             sortBy:   false,
@@ -86,7 +43,7 @@ var Data = {
             label:    "Provider Name"
         }
     },
-    operators: {
+    operators:        {
         is:        {
             label:  "is equal to",
             fields: ["isInternet", "isTriplePlay", "longTermPrice.amount", "internet.downloadSpeed", "provider"]
@@ -108,4 +65,4 @@ var Data = {
             fields: ["provider"]
         }
     }
-};
+});
