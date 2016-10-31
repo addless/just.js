@@ -12,12 +12,11 @@ var Just = (function constructor(rootEl) {
     var rendering;                   // indicates whether we're rendering
 
     return Object.freeze(Object.defineProperties(Just, {
-        data:   {value: bindData},
-        with:   {value: bindWith},
-        each:   {value: bindEach},
-        some:   {value: bindSome},
-        _2Arg:  {value: get2Arg},
-        render: {value: render}
+        data:  {value: bindData},
+        with:  {value: bindWith},
+        each:  {value: bindEach},
+        some:  {value: bindSome},
+        _2Arg: {value: get2Arg}
     }));
 
     // This is the returned constructor
