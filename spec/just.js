@@ -510,4 +510,27 @@ describe('Just', function () {
             });
         });
     });
+
+    it("descends into non-bound elements", function (done) {
+        var r = '<b><i class="e1">1</i><i class="e1">2</i></b>';
+        var h = '<b><i class="e1"> </i></b>';
+        var d = {a: {b: [1, 2]}};
+        var p = 'a.b.';
+        var s = 'e1';
+
+        just.data(d);
+        root.innerHTML = h;
+        just.with(s).each(p).call(setHTML);
+
+        requestAnimationFrame(function () {
+            expect(root.innerHTML).toBe(r);
+            done();
+        });
+
+        function setHTML(val, key) {
+            return function (e1) {
+                e1.innerHTML = val(0);
+            }
+        }
+    });
 });

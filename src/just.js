@@ -16,7 +16,7 @@ var Just = (function constructor(rootEl) {
         with:  {value: bindWith},
         each:  {value: bindEach},
         some:  {value: bindSome},
-        _args: {value: get2Arg}
+        _2Arg: {value: get2Arg}
     }));
 
     // This is the returned constructor
@@ -33,7 +33,7 @@ var Just = (function constructor(rootEl) {
     // This function recursively alters the given data .
     // Without it, we're unable to alter specific data associated within bindings.
     function setData(obj, val) {
-        var k = Object.keys(val);
+        var k = Object.keys(val || {});
         var i = -1;
 
         if (obj == null) return val;
@@ -53,11 +53,11 @@ var Just = (function constructor(rootEl) {
     // This function associates a given data path with a binding.
     // Without it, we're unable to specify which data paths belong to which bindings.
     function bindEach(path) {
-        var o = this;
-        var a = path.split('.');
-        var u = o._uuid || (idBase++).toString(36);
-        var x = dir2Arg[u] = dir2Arg[u] || [];
-        var y = o._args[u] = o._args[u] || [];
+        var o = this;                               // current binding directive
+        var a = path.split('.');                    // current binding directive's data path
+        var u = o._uuid || (idBase++).toString(36); // unique identifier for binding directive
+        var x = dir2Arg[u] = dir2Arg[u] || [];      // binding directive ids
+        var y = o._2Arg[u] = o._2Arg[u] || [];      // binding directive ids
 
         render();
         x[x.length] = y[y.length] = a;
@@ -69,12 +69,12 @@ var Just = (function constructor(rootEl) {
     // This function associates a given class with a binding.
     // Without it, we have no way of specifying which classes belong to which bindings.
     function bindWith(clsId) {
-        var d = this._dirs || dir2Dir;
-        var u = this._uuid || (idBase++).toString(36);
+        var d = this._dirs || dir2Dir;                 // binding directive tree
+        var u = this._uuid || (idBase++).toString(36); // binding directive identifier
 
         d[u] = d[u] || {value: {}};
         (cls2Dir[clsId] = cls2Dir[clsId] || []).push(u);
-        return {__proto__: this, _uuid: u, call: bindCall, _args: dir2Arg, _dirs: d[u].value};
+        return {__proto__: this, _uuid: u, call: bindCall, _2Arg: dir2Arg, _dirs: d[u].value};
     }
 
     // This function associates a given function with a binding.
@@ -184,8 +184,8 @@ var Just = (function constructor(rootEl) {
             }
 
             function move2NextEl() {
-                if (el.nextElementSibling == null) return;
-                addEl([], dir2Dir, el.nextElementSibling, 0, 0);
+                if (!typId.length) renderList(dir2Dir, memo, null, el.firstElementChild);
+                if (el.nextElementSibling) addEl([], dir2Dir, el.nextElementSibling, 0, 0);
             }
         }
 
@@ -340,7 +340,7 @@ var Just = (function constructor(rootEl) {
         function visitVals(val, obj, i, valId, argId, memo) {
             switch (true) {
             case val == null:
-                return;
+                return console.warn('Null value at path: ' + valId.join('.'));
 
             case i === valId.length:
                 memos.push(memo);
