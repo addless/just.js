@@ -12,11 +12,12 @@ var Just = (function constructor(rootEl) {
     var rendering;                   // indicates whether we're rendering
 
     return Object.freeze(Object.defineProperties(Just, {
-        data:  {value: bindData},
-        with:  {value: bindWith},
-        each:  {value: bindEach},
-        some:  {value: bindSome},
-        _2Arg: {value: get2Arg}
+        data:   {value: bindData},
+        with:   {value: bindWith},
+        each:   {value: bindEach},
+        some:   {value: bindSome},
+        _x2Arg: {value: get2Arg},
+        render: {value: render}
     }));
 
     // This is the returned constructor
@@ -26,19 +27,28 @@ var Just = (function constructor(rootEl) {
     // This function alters the data associated with bindings, and then re-renders the view.
     // Without it, we're unable to re-render the view with different data.
     function bindData(val) {
-        setData(rootObj, val);
+        rootObj = setData(rootObj, val);
         render();
     }
 
     // This function recursively alters the given data .
     // Without it, we're unable to alter specific data associated within bindings.
     function setData(obj, val) {
-        var k = Object.keys(val || {});
         var i = -1;
+        var k;
 
-        if (obj == null) return val;
-        if (typeof obj !== 'object') return val;
-        while (k[++i]) obj[k[i]] = setData(obj[k[i]], val[k[i]]);
+        switch (true) {
+        case typeof val !== 'object':
+        case val == null:
+        case obj == null:
+        case val === obj:
+            return val;
+        }
+
+        for (k = Object.keys(val); k[++i];) {
+            obj[k[i]] = setData(obj[k[i]], val[k[i]]);
+        }
+
         return obj;
     }
 
@@ -53,16 +63,14 @@ var Just = (function constructor(rootEl) {
     // This function associates a given data path with a binding.
     // Without it, we're unable to specify which data paths belong to which bindings.
     function bindEach(path) {
-        var o = this;                               // current binding directive
-        var a = path.split('.');                    // current binding directive's data path
-        var u = o._uuid || (idBase++).toString(36); // unique identifier for binding directive
-        var x = dir2Arg[u] = dir2Arg[u] || [];      // binding directive ids
-        var y = o._2Arg[u] = o._2Arg[u] || [];      // binding directive ids
+        var u = this._uuid || (idBase++).toString(36); // unique identifier for binding directive
+        var y = this._x2Arg[u] = this._x2Arg[u] || [];   // binding directive ids
+        var x = dir2Arg[u] = dir2Arg[u] || [];         // binding directive ids
 
         render();
-        x[x.length] = y[y.length] = a;
         (dir2Esc[u] = dir2Esc[u] || []).push(0);
         dir2Fnc[u] = function () { return isNaN };
+        x[x.length] = y[y.length] = path.split('.');
         return {__proto__: this, _uuid: u, call: bindCall, init: bindInit};
     }
 
@@ -74,7 +82,7 @@ var Just = (function constructor(rootEl) {
 
         d[u] = d[u] || {value: {}};
         (cls2Dir[clsId] = cls2Dir[clsId] || []).push(u);
-        return {__proto__: this, _uuid: u, call: bindCall, _2Arg: dir2Arg, _dirs: d[u].value};
+        return {__proto__: this, _uuid: u, call: bindCall, _x2Arg: dir2Arg, _dirs: d[u].value};
     }
 
     // This function associates a given function with a binding.
@@ -92,8 +100,8 @@ var Just = (function constructor(rootEl) {
         render();
 
         function limit(key, val) {
-            var r = fnc(key, val);
-            return (dir2Fnc[u] = function () { return r })();
+            dir2Fnc[u] = String;
+            fnc(key, val);
         }
     }
 
@@ -107,19 +115,21 @@ var Just = (function constructor(rootEl) {
 
         rendering = true;
         cancelAnimationFrame(render.$frame);
-        render.$frame = requestAnimationFrame(recurse.bind(null, 0));
+        render.$frame = requestAnimationFrame(recurse.bind(null, null, 0));
 
         // This function first executes all non-HTML-bound functions,
         // then renders the view.
-        function recurse(dirN) {
-            var dirId = Object.keys(get2Arg)[dirN];
+        function recurse(dirIds, dirN) {
             var el = rootEl || document.body;
             var memo = {__proto__: null};
 
             switch (true) {
-            case dirId != null:
-                visitArgs(arg2Key, arg2Obj, [], memo, dirId, dir2Fnc[dirId]);
-                return recurse(dirN + 1);
+            case dirIds == null:
+                return recurse(Object.keys(get2Arg), dirN);
+
+            case dirIds[dirN] != null:
+                visitArgs(arg2Key, arg2Obj, [], memo, dirIds[dirN], dir2Fnc[dirIds[dirN]]);
+                return recurse(dirIds, dirN + 1);
 
             default:
                 renderList(Object.create(null, dir2Dir), memo, null, el.firstElementChild);
@@ -313,7 +323,6 @@ var Just = (function constructor(rootEl) {
                 if (o[argN] == null) throw Error('bad value index: ' + argN);
                 if (arguments.length < 2) return o[argN][k[argN]];
                 o[argN][k[argN]] = setData(o[argN][k[argN]], val);
-                render();
             }
 
             function toKey(argN, key) {
@@ -322,15 +331,10 @@ var Just = (function constructor(rootEl) {
                 var x = Object.keys(o[argN]);
                 var i = x.indexOf(k[argN]);
                 var y = x.slice();
-                var v;
 
-                y[i] = key;
-                render();
-
-                for (i; x[i]; i++) {
-                    v = o[argN][x[i]];
+                for (y[i] = key; x[i]; i++) {
+                    o[argN][y[i]] = o[argN][x[i]];
                     delete o[argN][x[i]];
-                    o[argN][y[i]] = v;
                 }
             }
         }
@@ -343,10 +347,9 @@ var Just = (function constructor(rootEl) {
                 return console.warn('Null value at path: ' + valId.join('.'));
 
             case i === valId.length:
-                memos.push(memo);
-                arg2Obj[argId].push(obj);
                 arg2Key[argId].push(valId[i - 1]);
-                return;
+                arg2Obj[argId].push(obj);
+                return memos.push(memo);
 
             case valId[i] === '':
                 return getEachKey(val instanceof Array);

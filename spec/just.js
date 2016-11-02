@@ -267,81 +267,6 @@ describe('Just', function () {
         }
     });
 
-    it('setting values via val() causes re-render', function (done) {
-        var r1 = '<i class="e1">a</i><i class="e1">b</i>';
-        var r2 = '<i class="e1">x</i><i class="e1">b</i>';
-        var r3 = '<i class="e1">x</i><i class="e1">x</i>';
-        var h = '<i class="e1"></i>';
-        var d = {x: ['a', 'b']};
-        var p = 'x.';
-        var s = 'e1';
-
-        just.data(d);
-        root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
-
-        function setHTML(val, key) {
-            return function (e1) {
-                e1.innerHTML = val(0);
-                e1.onclick = function () {
-                    val(0, 'x');
-                }
-            };
-        }
-
-        requestAnimationFrame(function () {
-            expect(root.innerHTML).toBe(r1);
-            root.firstChild.onclick();
-
-            requestAnimationFrame(function () {
-                expect(root.innerHTML).toBe(r2);
-                root.lastChild.onclick();
-
-                requestAnimationFrame(function () {
-                    expect(root.innerHTML).toBe(r3);
-                    done();
-                })
-            })
-        });
-    });
-
-    it('setting values via key() causes re-render', function (done) {
-        var r1 = '<i class="e1">a</i><i class="e1">b</i>';
-        var r2 = '<i class="e1">x</i><i class="e1">b</i>';
-        var r3 = '<i class="e1">x</i>';
-        var h = '<i class="e1"></i>';
-        var d = {x: {a: 1, b: 1}};
-        var p = 'x.';
-        var s = 'e1';
-
-        just.data(d);
-        root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
-
-        function setHTML(val, key) {
-            return function (e1) {
-                e1.innerHTML = key(0);
-                e1.onclick = function () {
-                    key(0, 'x');
-                }
-            };
-        }
-
-        requestAnimationFrame(function () {
-            expect(root.innerHTML).toBe(r1);
-            root.firstChild.onclick();
-
-            requestAnimationFrame(function () {
-                expect(root.innerHTML).toBe(r2);
-                root.lastChild.onclick();
-
-                requestAnimationFrame(function () {
-                    expect(root.innerHTML).toBe(r3);
-                    done();
-                })
-            })
-        });
-    });
 
     it('init() works like call(), but executes the function only once', function (done) {
         var r1 = '<i class="e1">1</i><i class="e1">1</i>';
@@ -366,17 +291,15 @@ describe('Just', function () {
         function setHTML(val, key) {
             return function (e1) {
                 e1.innerHTML = val(0);
-                e1.onclick = function () {
-                    val(0, val(0));
-                };
+                e1.onclick = just.render;
             };
         }
 
-        requestAnimationFrame(function () {
+        var a = requestAnimationFrame(function () {
             expect(root.innerHTML).toBe(r1);
             root.firstChild.onclick();
 
-            requestAnimationFrame(function () {
+            var a = requestAnimationFrame(function () {
                 expect(root.innerHTML).toBe(r2);
                 done();
             });
@@ -436,6 +359,7 @@ describe('Just', function () {
             return function (e1) {
                 e1.innerHTML = val(0);
                 e1.onclick = function () {
+                    just.render();
                     val(1, 2);
                 }
             }
@@ -443,7 +367,7 @@ describe('Just', function () {
 
         requestAnimationFrame(function () {
             expect(root.innerHTML).toBe(r1);
-            root.firstChild.click();
+            root.firstChild.onclick();
 
             requestAnimationFrame(function () {
                 expect(root.innerHTML).toBe(r2);
@@ -509,6 +433,29 @@ describe('Just', function () {
                 done();
             });
         });
+    });
+
+    it("descends into non-bound elements", function (done) {
+        var r = '<b><i class="e1">1</i><i class="e1">2</i></b>';
+        var h = '<b><i class="e1"> </i></b>';
+        var d = {a: {b: [1, 2]}};
+        var p = 'a.b.';
+        var s = 'e1';
+
+        just.data(d);
+        root.innerHTML = h;
+        just.with(s).each(p).call(setHTML);
+
+        requestAnimationFrame(function () {
+            expect(root.innerHTML).toBe(r);
+            done();
+        });
+
+        function setHTML(val, key) {
+            return function (e1) {
+                e1.innerHTML = val(0);
+            }
+        }
     });
 
     it("descends into non-bound elements", function (done) {
