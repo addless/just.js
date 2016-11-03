@@ -8,6 +8,8 @@ var Just = (function constructor(rootEl) {
     var dir2Arg = {__proto__: null}; // maps directive IDs to argument data paths
     var dir2Esc = {__proto__: null}; // maps directive IDs to argument escape flags
     var rootObj = {__proto__: null}; // root object of the shared data model
+    var n2Val = new N2Val();         // Maps argument indexes to assessors that get/set values
+    var n2Key = new N2Key();         // Maps argument indexes to assessors that get/set values
     var idBase = Date.now();         // base number used to generate all binding ids
     var rendering;                   // indicates whether we're rendering
 
@@ -100,8 +102,47 @@ var Just = (function constructor(rootEl) {
         render();
 
         function limit(key, val) {
-            dir2Fnc[u] = String;
+            dir2Fnc[u] = Function();
             fnc(key, val);
+        }
+    }
+
+    // Instances of this class map argument indexes to assessors that get/set values.
+    // Without it, bound functions cannot manipulate the data model values in a standard way.
+    function N2Val() {
+        var argN = 0;
+        var props = [];
+        while (argN < 10) defineArg(argN++);
+        return Object.create(null, props);
+
+        function defineArg(argN) {
+            props[argN] = {};
+            props[argN].get = function () { return this._obj[argN][this._key[argN]] };
+            props[argN].set = function (val) { return this._obj[argN][this._key[argN]] = val };
+        }
+    }
+
+    // Instances of this class map argument indexes to assessors that get/set keys.
+    // Without it, bound functions cannot manipulate the data model keys in a standard way.
+    function N2Key() {
+        var argN = 0;
+        var props = [];
+        while (argN < 10) defineArg(argN++);
+        return Object.create(null, props);
+
+        function defineArg(argN) {
+            props[argN] = {};
+            props[argN].get = function () { return this._key[argN] };
+            props[argN].set = function (key) {
+                var x = Object.keys(this._obj[argN]);
+                var i = x.indexOf(this._key[argN]);
+                var y = x.slice();
+
+                for (y[i] = key; x[i]; i++) {
+                    this._obj[argN][y[i]] = this._obj[argN][x[i]];
+                    delete this._obj[argN][x[i]];
+                }
+            }
         }
     }
 
@@ -288,7 +329,7 @@ var Just = (function constructor(rootEl) {
         // Without it, we're unable to ensure that the callback is given every combination it expects.
         function recurse(argN, valN) {
             var argId = dir2Arg[dirId][argN];
-            var k, o;
+            var v, k;
 
             switch (true) {
             case argId == null:
@@ -314,28 +355,11 @@ var Just = (function constructor(rootEl) {
                 return recurse(argN + 1, 0) && dir2Esc[dirId][argN] || recurse(argN, valN + 1);
 
             default:
-                k = keys.slice();
-                o = objs.slice();
-                return cb(toVal, toKey, valN) && dir2Esc[dirId][argN] || recurse(argN, valN + 1);
-            }
-
-            function toVal(argN, val) {
-                if (o[argN] == null) throw Error('bad value index: ' + argN);
-                if (arguments.length < 2) return o[argN][k[argN]];
-                o[argN][k[argN]] = setData(o[argN][k[argN]], val);
-            }
-
-            function toKey(argN, key) {
-                if (o[argN] == null) throw Error('bad key index: ' + argN);
-                if (arguments.length < 2) return k[argN];
-                var x = Object.keys(o[argN]);
-                var i = x.indexOf(k[argN]);
-                var y = x.slice();
-
-                for (y[i] = key; x[i]; i++) {
-                    o[argN][y[i]] = o[argN][x[i]];
-                    delete o[argN][x[i]];
-                }
+                v = {__proto__: n2Val};
+                k = {__proto__: n2Key};
+                v._key = k._key = keys.slice();
+                v._obj = k._obj = objs.slice();
+                return cb(v, k, valN) && dir2Esc[dirId][argN] || recurse(argN, valN + 1);
             }
         }
 
