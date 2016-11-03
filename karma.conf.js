@@ -1,10 +1,10 @@
 module.exports = function(config) {
     config.set({
         browsers: [
-            'Chrome',
+            'Chrome'/*,
             'Firefox',
             'Safari',
-            'Opera'
+            'Opera'*/
         ],
         files: [
             'karma.include.js',

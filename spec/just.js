@@ -42,7 +42,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
     });
@@ -64,8 +64,8 @@ describe('Just', function () {
         });
 
         function setHTML(val, key) {
-            if (val(0)) return function (e1) {
-                e1.innerHTML = key(0);
+            if (val[0]) return function (e1) {
+                e1.innerHTML = key[0];
             }
         }
     });
@@ -88,8 +88,8 @@ describe('Just', function () {
         });
 
         function setHTML(val, key) {
-            if (val(0) === val(1)) return function (e1) {
-                e1.innerHTML = val(0) + val(1);
+            if (val[0] === val[1]) return function (e1) {
+                e1.innerHTML = val[0] + val[1];
             }
         }
     });
@@ -113,8 +113,8 @@ describe('Just', function () {
         });
 
         function setHTML(val, key) {
-            if (val(0) === val(1) && val(1) === val(2)) return function (e1) {
-                e1.innerHTML = val(0) + val(1) + val(2);
+            if (val[0] === val[1] && val[1] === val[2]) return function (e1) {
+                e1.innerHTML = val[0] + val[1] + val[2];
             }
         }
     });
@@ -138,7 +138,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = key(0) + '' + key(1);
+                e1.innerHTML = key[0] + '' + key[1];
             }
         }
     });
@@ -162,7 +162,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = key(0) + '' + key(1);
+                e1.innerHTML = key[0] + '' + key[1];
             }
         }
     });
@@ -187,7 +187,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
     });
@@ -233,7 +233,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0) + val(1);
+                e1.innerHTML = val[0] + val[1];
             }
         }
     });
@@ -257,12 +257,12 @@ describe('Just', function () {
         });
 
         function addVal(val, key) {
-            val(1, val(1) + '' + val(0));
+            val[1] = val[1] + '' + val[0]
         }
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
     });
@@ -285,12 +285,12 @@ describe('Just', function () {
         just.with(s).each(p3).call(setHTML);
 
         function addVal(val, key) {
-            val(0, val(0) + 1);
+            val[0] += 1;
         }
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
                 e1.onclick = just.render;
             };
         }
@@ -320,13 +320,13 @@ describe('Just', function () {
         just.with(s2).each(p).call(filterOdd);
 
         function filterOdd(val, key) {
-            if (val(0) % 2) return function (e1) {
+            if (val[0] % 2) return function (e1) {
             }
         }
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
 
@@ -352,15 +352,15 @@ describe('Just', function () {
         just.with(s2).each(p1).each(p2).call(filterOut);
 
         function filterOut(val, key) {
-            if (val(0) % val(1)) return function () {}
+            if (val[0] % val[1]) return function () {}
         }
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
                 e1.onclick = function () {
                     just.render();
-                    val(1, 2);
+                    val[1] = 2
                 }
             }
         }
@@ -396,7 +396,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML += val(0);
+                e1.innerHTML += val[0];
             }
         }
     });
@@ -415,12 +415,12 @@ describe('Just', function () {
         just.each(p1).each(p2).init(initBindings);
 
         function initBindings(val, key) {
-            just.with(s).each(val(0)).each(val(1)).call(setHTML);
+            just.with(s).each(val[0]).each(val[1]).call(setHTML);
         }
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0) % val(1);
+                e1.innerHTML = val[0] % val[1];
             }
         }
 
@@ -453,7 +453,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
     });
@@ -476,7 +476,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val(0);
+                e1.innerHTML = val[0];
             }
         }
     });
