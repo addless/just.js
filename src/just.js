@@ -153,6 +153,7 @@ var Just = (function constructor(rootEl) {
 
         var arg2Key = {__proto__: null};
         var arg2Obj = {__proto__: null};
+        var arg2Mem = {__proto__: null};
 
         rendering = true;
         cancelAnimationFrame(render.$frame);
@@ -169,7 +170,7 @@ var Just = (function constructor(rootEl) {
                 return recurse(Object.keys(get2Arg), dirN);
 
             case dirIds[dirN] != null:
-                visitArgs(arg2Key, arg2Obj, [], memo, dirIds[dirN], dir2Fnc[dirIds[dirN]]);
+                visitArgs(arg2Key, arg2Obj, arg2Mem, memo, dirIds[dirN], dir2Fnc[dirIds[dirN]]);
                 return recurse(dirIds, dirN + 1);
 
             default:
@@ -185,11 +186,12 @@ var Just = (function constructor(rootEl) {
         var parent = Object(prvEl).parentNode;
         var arg2Key = {__proto__: null};
         var arg2Obj = {__proto__: null};
+        var arg2Mem = {__proto__: null};
+        var dir2Mem = {__proto__: null};
         var dir2Dec = {__proto__: null};
         var typ2Gen = {__proto__: null};
         var typ2Els = {__proto__: null};
         var typ2Dir = {__proto__: null};
-        var typ2Mem = {__proto__: null};
 
         switch (true) {
         case prvEl == null:
@@ -228,7 +230,6 @@ var Just = (function constructor(rootEl) {
             function addEl2Index() {
                 typId = Object.keys(typId);
                 if (typId.length === 0) return;
-                typ2Mem[typId] = typ2Mem[typId] || [];
                 typ2Dir[typId] = typ2Dir[typId] || typId;
                 (typ2Els[typId] = typ2Els[typId] || []).push(el);
                 typ2Gen[typId] = typ2Els[typId][0].$gen = typ2Els[typId][0].$gen || el.cloneNode(true);
@@ -253,14 +254,16 @@ var Just = (function constructor(rootEl) {
 
             case dir2Dec[dirId] == null:
                 dir2Dec[dirId] = [];
-                visitArgs(arg2Key, arg2Obj, typ2Mem[typId], memo, dirId, addDec);
+                dir2Mem[dirId] = [];
+                visitArgs(arg2Key, arg2Obj, arg2Mem, memo, dirId, addDec);
             }
 
-            function addDec(vals, keys, valN) {
-                var dec = dir2Fnc[dirId](vals, keys);
-                if (typeof dec !== 'function') dec = null;
-                dir2Dec[dirId].push(dec);
-                return dec;
+            function addDec(vals, keys, memo) {
+                var func = dir2Fnc[dirId](vals, keys);
+                if (typeof func !== 'function') func = null;
+                dir2Mem[dirId].push(memo);
+                dir2Dec[dirId].push(func);
+                return func;
             }
 
             switch (true) {
@@ -301,7 +304,7 @@ var Just = (function constructor(rootEl) {
             function insertEl(el) {
                 el.style.display = '';
                 if (prvEl !== el) prvEl = parent.insertBefore(el, prvEl && prvEl.nextSibling);
-                if (typ2Dir[typId].length === dirN + 1) renderList(dir2Dir, typ2Mem[typId][valN], null, el.firstElementChild);
+                if (typ2Dir[typId].length === dirN + 1) renderList(dir2Dir, dir2Mem[dirId][valN], null, el.firstElementChild);
             }
 
             switch (true) {
@@ -319,7 +322,8 @@ var Just = (function constructor(rootEl) {
 
     // This function executes a given callback as many times as specified by the number of arguments.
     // Without it, we're unable to execute decorators in accordance with their associated data paths.
-    function visitArgs(arg2Key, arg2Obj, memos, memo, dirId, cb) {
+    function visitArgs(arg2Key, arg2Obj, arg2Mem, memo, dirId, cb) {
+        var val2Mem = memo;
         var keys = [];
         var objs = [];
 
@@ -338,7 +342,8 @@ var Just = (function constructor(rootEl) {
             case arg2Key[argId] == null:
                 arg2Key[argId] = [];
                 arg2Obj[argId] = [];
-                visitVals(rootObj, null, 0, argId.slice(), argId, memo);
+                arg2Mem[argId] = [];
+                visitVals(rootObj, null, 0, argId.slice(), argId, memo, {__proto__: null});
             }
 
             switch (true) {
@@ -346,6 +351,7 @@ var Just = (function constructor(rootEl) {
                 return;
 
             default:
+                val2Mem = Object.create(val2Mem, arg2Mem[argId][valN]);
                 keys[argN] = arg2Key[argId][valN];
                 objs[argN] = arg2Obj[argId][valN];
             }
@@ -359,13 +365,13 @@ var Just = (function constructor(rootEl) {
                 k = {__proto__: n2Key};
                 v._key = k._key = keys.slice();
                 v._obj = k._obj = objs.slice();
-                return cb(v, k, valN) && dir2Esc[dirId][argN] || recurse(argN, valN + 1);
+                return cb(v, k, val2Mem) && dir2Esc[dirId][argN] || recurse(argN, valN + 1);
             }
         }
 
         // This function resolves a dot notation data path in a recursive one-to-many manner.
         // Without it, we have no way of accessing values associated with dot notation data paths.
-        function visitVals(val, obj, i, valId, argId, memo) {
+        function visitVals(val, obj, i, valId, argId, memo, val2Mem) {
             switch (true) {
             default:
             case val == null:
@@ -373,14 +379,15 @@ var Just = (function constructor(rootEl) {
 
             case i === valId.length:
                 arg2Key[argId].push(valId[i - 1]);
+                arg2Mem[argId].push(val2Mem);
                 arg2Obj[argId].push(obj);
-                return memos.push(memo);
+                return;
 
             case valId[i] === '':
                 return getEachKey(val[0] != null);
 
             case val[valId[i]] != null:
-                return visitVals(val[valId[i]], val, i + 1, valId, argId, memo);
+                return visitVals(val[valId[i]], val, i + 1, valId, argId, memo, val2Mem);
 
             case val[0] != null:
                 valId.splice(i, 0, null);
@@ -389,15 +396,15 @@ var Just = (function constructor(rootEl) {
 
             function getEachKey(isArray) {
                 var n = -1;
-                var m = memo;
-                var s = valId.slice(0, i);
+                var v = valId.slice(0, i);
                 var t = isArray ? Number : String;
-                var k = m[s] != null ? [m[s]] : Object.keys(val);
+                var k = memo[v] != null ? [memo[v]] : Object.keys(val);
 
                 while (k[++n] != null) {
-                    m = {__proto__: memo};
-                    m[s] = valId[i] = t(k[n]);
-                    visitVals(val[k[n]], val, i + 1, valId, argId, m);
+                    valId[i] = t(k[n]);
+                    val2Mem = {__proto__: val2Mem};
+                    val2Mem[v] = {value: valId[i]};
+                    visitVals(val[k[n]], val, i + 1, valId, argId, memo, val2Mem);
                 }
             }
         }
