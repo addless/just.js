@@ -367,6 +367,7 @@ var Just = (function constructor(rootEl) {
         // Without it, we have no way of accessing values associated with dot notation data paths.
         function visitVals(val, obj, i, valId, argId, memo) {
             switch (true) {
+            default:
             case val == null:
                 return console.warn('Null value at path: ' + valId.join('.'));
 
@@ -376,12 +377,12 @@ var Just = (function constructor(rootEl) {
                 return memos.push(memo);
 
             case valId[i] === '':
-                return getEachKey(val instanceof Array);
+                return getEachKey(val[0] != null);
 
             case val[valId[i]] != null:
                 return visitVals(val[valId[i]], val, i + 1, valId, argId, memo);
 
-            case val instanceof Array:
+            case val[0] != null:
                 valId.splice(i, 0, null);
                 return getEachKey(true);
             }

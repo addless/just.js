@@ -480,4 +480,27 @@ describe('Just', function () {
             }
         }
     });
+
+    it("loops through array-like objects", function (done) {
+        var r = '<i class="e1">1</i><i class="e1">2</i>';
+        var d = {a: {0: {b: 1}, 1: {b: 2}}};
+        var h = '<i class="e1"> </i>';
+        var p = 'a.b';
+        var s = 'e1';
+
+        just.data(d);
+        root.innerHTML = h;
+        just.with(s).each(p).call(setHTML);
+
+        requestAnimationFrame(function () {
+            expect(root.innerHTML).toBe(r);
+            done();
+        });
+
+        function setHTML(val, key) {
+            return function (e1) {
+                e1.innerHTML = val[0];
+            }
+        }
+    });
 });
