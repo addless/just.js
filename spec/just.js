@@ -211,11 +211,11 @@ describe('Just', function () {
     });
 
     it('render() passes data to descendant bindings', function (done) {
-        var r = '<i class="e1"><i class="e2"><i class="e3">02</i></i><i class="e2"><i class="e3">03</i></i></i><i class="e1"><i class="e2"><i class="e3">12</i></i><i class="e2"><i class="e3">13</i></i></i>';
-        var h = '<i class="e1"><i class="e2"><i class="e3"> </i></i></i>';
-        var d = {x: {a: ['0', '1'], b: ['2', '3']}};
-        var p1 = 'x.a.';
-        var p2 = 'x.b.';
+        var r = '<i class="e1"></i><i class="e2"><i class="e3">13</i></i><i class="e1"></i><i class="e2"><i class="e3">14</i></i><i class="e2"><i class="e3">23</i></i><i class="e2"><i class="e3">24</i></i>';
+        var h = '<i class="e1"></i><i class="e2"><i class="e3"> </i></i>';
+        var d = {a: {b: [1, 2], c: [3, 4]}};
+        var p1 = 'a.b.';
+        var p2 = 'a.c.';
         var s1 = 'e1';
         var s2 = 'e2';
         var s3 = 'e3';
@@ -223,7 +223,7 @@ describe('Just', function () {
         just.data(d);
         root.innerHTML = h;
         just.with(s1).each(p1);
-        just.with(s2).each(p2);
+        just.with(s2).each(p1).each(p2);
         just.with(s3).each(p1).each(p2).call(setHTML);
 
         requestAnimationFrame(function () {
@@ -233,7 +233,7 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
-                e1.innerHTML = val[0] + val[1];
+                e1.innerHTML = val[0] + '' + val[1];
             }
         }
     });
