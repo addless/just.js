@@ -82,9 +82,9 @@ var Just = (function constructor(rootEl) {
         var d = this._dirs || dir2Dir;                 // binding directive tree
         var u = this._uuid || (idBase++).toString(36); // binding directive identifier
 
-        d[u] = d[u] || {value: {}};
+        (d[u] = d[u] || {__proto__: null}).value = d[u];
         (cls2Dir[clsId] = cls2Dir[clsId] || []).push(u);
-        return {__proto__: this, _uuid: u, call: bindCall, _x2Arg: dir2Arg, _dirs: d[u].value};
+        return {__proto__: this, _uuid: u, call: bindCall, _x2Arg: dir2Arg, _dirs: d[u]};
     }
 
     // This function associates a given function with a binding.
@@ -172,7 +172,7 @@ var Just = (function constructor(rootEl) {
                 return recurse(dirN + 1);
 
             default:
-                renderList(Object.create(null, dir2Dir), memo, null, el.firstElementChild);
+                renderList(dir2Dir, memo, null, el.firstElementChild);
                 isRendering = false;
             }
         }
