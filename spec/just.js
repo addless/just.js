@@ -458,11 +458,11 @@ describe('Just', function () {
         }
     });
 
-    it("descends into non-bound elements", function (done) {
-        var r = '<b><i class="e1">1</i><i class="e1">2</i></b>';
-        var h = '<b><i class="e1"> </i></b>';
-        var d = {a: {b: [1, 2]}};
-        var p = 'a.b.';
+    it("loops through array-like objects", function (done) {
+        var r = '<i class="e1">1</i><i class="e1">2</i>';
+        var d = {a: {0: {b: 1}, 1: {b: 2}}};
+        var h = '<i class="e1"> </i>';
+        var p = 'a.b';
         var s = 'e1';
 
         just.data(d);
@@ -481,21 +481,34 @@ describe('Just', function () {
         }
     });
 
-    it("loops through array-like objects", function (done) {
-        var r = '<i class="e1">1</i><i class="e1">2</i>';
-        var d = {a: {0: {b: 1}, 1: {b: 2}}};
+    it("supports recursive binding definition", function (done) {
+        var r = '<i class="e1">1</i><i class="e1"><i class="e2">2</i></i>';
+        var d = {a: {b: [1, '<i class="e2"> </i>'], c: 1}};
         var h = '<i class="e1"> </i>';
-        var p = 'a.b';
-        var s = 'e1';
+        var p1 = 'a.b.';
+        var p2 = 'a.c';
+        var s1 = 'e1';
+        var s2 = 'e2';
+        var p0 = 'a';
 
         just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
+        just.each(p0).init(addBindings);
+        just.with(s1).each(p1).call(setHTML);
 
         requestAnimationFrame(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
+
+        function addBindings() {
+            just.each(p2).call(increment);
+            just.with(s2).each(p2).call(setHTML);
+        }
+
+        function increment(val) {
+            val[0] += 1;
+        }
 
         function setHTML(val, key) {
             return function (e1) {

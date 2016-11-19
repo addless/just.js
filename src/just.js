@@ -11,7 +11,7 @@ var Just = (function constructor(rootEl) {
     var n2Val = new N2Val();         // Maps argument indexes to assessors that get/set values
     var n2Key = new N2Key();         // Maps argument indexes to assessors that get/set values
     var idBase = Date.now();         // base number used to generate all binding ids
-    var rendering;                   // indicates whether we're rendering
+    var isRendering;                 // indicates whether we're rendering
 
     return Object.freeze(Object.defineProperties(Just, {
         data:   {value: bindData},
@@ -149,33 +149,31 @@ var Just = (function constructor(rootEl) {
     // This function de-bounces the view render.
     // Without it, we'd be unable to avoid unnecessary back-to-back rendering.
     function render() {
-        if (rendering) return;
+        if (isRendering) return;
 
         var arg2Key = {__proto__: null};
         var arg2Obj = {__proto__: null};
         var arg2Mem = {__proto__: null};
 
-        rendering = true;
+        isRendering = true;
         cancelAnimationFrame(render.$frame);
-        render.$frame = requestAnimationFrame(recurse.bind(null, null, 0));
+        render.$frame = requestAnimationFrame(recurse.bind(null, 0));
 
         // This function first executes all non-HTML-bound functions,
         // then renders the view.
-        function recurse(dirIds, dirN) {
+        function recurse(dirN) {
+            var dirIds = Object.keys(get2Arg);
             var el = rootEl || document.body;
             var memo = {__proto__: null};
 
             switch (true) {
-            case dirIds == null:
-                return recurse(Object.keys(get2Arg), dirN);
-
             case dirIds[dirN] != null:
                 visitArgs(arg2Key, arg2Obj, arg2Mem, memo, dirIds[dirN], dir2Fnc[dirIds[dirN]]);
-                return recurse(dirIds, dirN + 1);
+                return recurse(dirN + 1);
 
             default:
                 renderList(Object.create(null, dir2Dir), memo, null, el.firstElementChild);
-                rendering = false;
+                isRendering = false;
             }
         }
     }
@@ -375,7 +373,7 @@ var Just = (function constructor(rootEl) {
             switch (true) {
             default:
             case val == null:
-                return console.warn('Null value at path: ' + valId.join('.'));
+                return console.warn('Null value at path: ' + valId.slice(i).join('.'));
 
             case i === valId.length:
                 arg2Key[argId].push(valId[i - 1]);
