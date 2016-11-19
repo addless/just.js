@@ -494,7 +494,6 @@ describe('Just', function () {
         just.data(d);
         root.innerHTML = h;
         just.each(p0).init(addBindings);
-        just.with(s1).each(p1).call(setHTML);
 
         requestAnimationFrame(function () {
             expect(root.innerHTML).toBe(r);
@@ -503,7 +502,7 @@ describe('Just', function () {
 
         function addBindings() {
             just.each(p2).call(increment);
-            just.with(s2).each(p2).call(setHTML);
+            just.with(s1).each(p1).call(setHTML);
         }
 
         function increment(val) {
@@ -512,7 +511,10 @@ describe('Just', function () {
 
         function setHTML(val, key) {
             return function (e1) {
+                var o = val[0];
                 e1.innerHTML = val[0];
+                if (typeof o !== 'string') return;
+                just.with(s2).each(p2).call(setHTML);
             }
         }
     });
