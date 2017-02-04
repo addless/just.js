@@ -401,7 +401,7 @@ describe('Just', function () {
         }
     });
 
-    it("supports late definition of bindings", function (done) {
+    it('supports late definition of bindings', function (done) {
         var r = '<i class="e1">1</i><i class="e1">2</i>';
         var d1 = {x: {a: [11, 12], b: 5}};
         var d2 = {y: 'x.a.', z: 'x.b'};
@@ -435,7 +435,7 @@ describe('Just', function () {
         });
     });
 
-    it("descends into non-bound elements", function (done) {
+    it('descends into non-bound elements', function (done) {
         var r = '<b><i class="e1">1</i><i class="e1">2</i></b>';
         var h = '<b><i class="e1"> </i></b>';
         var d = {a: {b: [1, 2]}};
@@ -458,7 +458,7 @@ describe('Just', function () {
         }
     });
 
-    it("loops through array-like objects", function (done) {
+    it('loops through array-like objects', function (done) {
         var r = '<i class="e1">1</i><i class="e1">2</i>';
         var d = {a: {0: {b: 1}, 1: {b: 2}}};
         var h = '<i class="e1"> </i>';
@@ -481,7 +481,7 @@ describe('Just', function () {
         }
     });
 
-    it("supports recursive binding definition", function (done) {
+    it('supports recursive binding definition', function (done) {
         var r = '<i class="e1">1</i><i class="e1"><i class="e2">2</i></i>';
         var d = {a: {b: [1, '<i class="e2"> </i>'], c: 1}};
         var h = '<i class="e1"> </i>';
@@ -516,6 +516,26 @@ describe('Just', function () {
                 if (typeof o !== 'string') return;
                 just.with(s2).each(p2).call(setHTML);
             }
+        }
+    });
+
+    it("should skip DOM-bindings if root element doesn't exist", function (done) {
+        var just = new Just(null);
+        var d = {a: [1, 2]};
+        var r = {a: [2, 3]};
+        var p = 'a.';
+
+        Object.defineProperty(document, 'body', {value: null});
+        just.each(p).init(incrementVal);
+        just.data(d);
+
+        requestAnimationFrame(function () {
+            expect(d).toEqual(r);
+            done();
+        });
+
+        function incrementVal(val, key) {
+            val[0] += 1;
         }
     });
 });
