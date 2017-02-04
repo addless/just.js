@@ -33,11 +33,10 @@ var Just = (function constructor(rootEl) {
         render();
     }
 
-    // This function recursively alters the given data .
+    // This function recursively alters the given data.
     // Without it, we're unable to alter specific data associated within bindings.
     function setData(obj, val) {
-        var i = -1;
-        var k;
+        var i, k;
 
         switch (true) {
         case typeof val !== 'object':
@@ -47,7 +46,7 @@ var Just = (function constructor(rootEl) {
             return val;
         }
 
-        for (k = Object.keys(val); k[++i];) {
+        for (i = -1, k = Object.keys(val); k[++i];) {
             obj[k[i]] = setData(obj[k[i]], val[k[i]]);
         }
 
@@ -59,7 +58,7 @@ var Just = (function constructor(rootEl) {
     function bindSome(path) {
         var o = bindEach.call(this, path);
         dir2Esc[o._uuid].splice(-1, 1, 1);
-        return {__proto__: o, each: void 0};
+        return {__proto__: o, each: undefined};
     }
 
     // This function associates a given data path with a binding.
@@ -116,7 +115,7 @@ var Just = (function constructor(rootEl) {
         return Object.create(null, props);
 
         function defineArg(argN) {
-            props[argN] = {};
+            props[argN] = {__proto__: null};
             props[argN].get = function () { return this._obj[argN][this._key[argN]] };
             props[argN].set = function (val) { return this._obj[argN][this._key[argN]] = val };
         }
@@ -171,7 +170,7 @@ var Just = (function constructor(rootEl) {
                 visitArgs(arg2Key, arg2Obj, arg2Mem, memo, dirIds[dirN], dir2Fnc[dirIds[dirN]]);
                 return recurse(dirN + 1);
 
-            default:
+            case el != null:
                 renderList(dir2Dir, memo, null, el.firstElementChild);
                 isRendering = false;
             }
@@ -373,7 +372,7 @@ var Just = (function constructor(rootEl) {
             switch (true) {
             default:
             case val == null:
-                return console.warn('Null value at path: ' + valId.slice(i).join('.'));
+                return console.warn('Null value at path: ' + valId.slice(0, i + 1).join('.'));
 
             case i === valId.length:
                 arg2Key[argId].push(valId[i - 1]);
