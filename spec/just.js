@@ -538,4 +538,26 @@ describe('Just', function () {
             val[0] += 1;
         }
     });
+
+    it('renders root element', function (done) {
+        var d = {a: 'b'};
+        var s = 'root';
+        var p = 'a';
+        var r = 'b';
+
+        just.data(d);
+        root.classList.add('root');
+        just.with(s).each(p).call(setHTML);
+
+        requestAnimationFrame(function () {
+            expect(root.innerHTML).toBe(r);
+            done();
+        });
+
+        function setHTML(val) {
+            return function (el) {
+                el.innerHTML = val[0];
+            }
+        }
+    });
 });

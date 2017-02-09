@@ -171,7 +171,7 @@ var Just = (function constructor(rootEl) {
                 return recurse(dirN + 1);
 
             case el != null:
-                renderList(dir2Dir, memo, null, el.firstElementChild);
+                renderList(dir2Dir, memo, null, el);
                 isRendering = false;
             }
         }
