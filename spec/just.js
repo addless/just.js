@@ -560,4 +560,27 @@ describe('Just', function () {
             }
         }
     });
+
+    it('handles multi-sequential-dot data paths', function (done) {
+        var r = '<i class="e1">1</i><i class="e1">2</i><i class="e1">3</i><i class="e1">4</i>';
+        var d = {a: {b: [1, 2], c: [3, 4]}};
+        var h = '<i class="e1"> </i>';
+        var p = 'a..';
+        var s = 'e1';
+
+        just.data(d);
+        root.innerHTML = h;
+        just.with(s).each(p).call(setText);
+
+        requestAnimationFrame(function () {
+            expect(root.innerHTML).toBe(r);
+            done();
+        });
+
+        function setText(val) {
+            return function (el) {
+                el.textContent = val[0];
+            }
+        }
+    });
 });
