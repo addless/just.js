@@ -393,15 +393,17 @@ var Just = (function constructor(rootEl) {
 
             function getEachKey(isArray) {
                 var n = -1;
+                var m = val2Mem;
+                var d = valId.slice(0);
                 var v = valId.slice(0, i);
                 var t = isArray ? Number : String;
                 var k = memo[v] != null ? [memo[v]] : Object.keys(val);
 
                 while (k[++n] != null) {
-                    valId[i] = t(k[n]);
-                    val2Mem = {__proto__: val2Mem};
-                    val2Mem[v] = {value: valId[i]};
-                    visitVals(val[k[n]], val, i + 1, valId, argId, memo, val2Mem);
+                    d[i] = t(k[n]);
+                    val2Mem = {__proto__: m};
+                    val2Mem[v] = {value: d[i]};
+                    visitVals(val[k[n]], val, i + 1, d, argId, memo, val2Mem);
                 }
             }
         }
