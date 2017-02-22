@@ -1,11 +1,15 @@
 describe('Just', function () {
-    var root,
-        just;
+    var root;
+    var just;
 
     beforeEach(function () {
         root = document.querySelector('#jasmine_fixture');
         just = new Just(root);
     });
+
+    function wait(func) {
+        return setTimeout(func, 80);
+    }
 
     it('duplicates elements according to data', function (done) {
         var r = '<i class="e1"></i><i class="e1"></i>';
@@ -18,7 +22,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -35,7 +39,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -58,7 +62,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -82,7 +86,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p1).each(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -107,7 +111,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p1).each(p2).each(p3).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -131,7 +135,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p1).each(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -155,7 +159,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p1).some(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -180,7 +184,7 @@ describe('Just', function () {
         just.with(s1).each(p).call(setHTML);
         just.with(s2).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -204,7 +208,7 @@ describe('Just', function () {
         root.firstChild.focus();
         expect(root.firstChild).toBe(document.activeElement);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.firstChild).toBe(document.activeElement);
             done();
         });
@@ -226,7 +230,7 @@ describe('Just', function () {
         just.with(s2).each(p1).each(p2);
         just.with(s3).each(p1).each(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -251,7 +255,7 @@ describe('Just', function () {
         just.each(p1).each(p2).call(addVal);
         just.with(s).each(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -266,7 +270,6 @@ describe('Just', function () {
             }
         }
     });
-
 
     it('init() works like call(), but executes the function only once', function (done) {
         var r1 = '<i class="e1">1</i><i class="e1">1</i>';
@@ -295,11 +298,11 @@ describe('Just', function () {
             };
         }
 
-        var a = requestAnimationFrame(function () {
+        var a = wait(function () {
             expect(root.innerHTML).toBe(r1);
             root.firstChild.onclick();
 
-            var a = requestAnimationFrame(function () {
+            var a = wait(function () {
                 expect(root.innerHTML).toBe(r2);
                 done();
             });
@@ -330,7 +333,7 @@ describe('Just', function () {
             }
         }
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -365,11 +368,11 @@ describe('Just', function () {
             }
         }
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r1);
             root.firstChild.onclick();
 
-            requestAnimationFrame(function () {
+            wait(function () {
                 expect(root.innerHTML).toBe(r2);
                 done();
             });
@@ -389,7 +392,7 @@ describe('Just', function () {
         just.with(s).each(p1).call(setHTML);
         just.with(s).each(p2).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -424,11 +427,11 @@ describe('Just', function () {
             }
         }
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(h);
             just.data(d2);
 
-            requestAnimationFrame(function () {
+            wait(function () {
                 expect(root.innerHTML).toBe(r);
                 done();
             });
@@ -446,7 +449,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -469,7 +472,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -495,7 +498,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.each(p0).init(addBindings);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -529,7 +532,7 @@ describe('Just', function () {
         just.each(p).init(incrementVal);
         just.data(d);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(d).toEqual(r);
             done();
         });
@@ -549,7 +552,7 @@ describe('Just', function () {
         root.classList.add('root');
         just.with(s).each(p).call(setHTML);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -572,7 +575,7 @@ describe('Just', function () {
         root.innerHTML = h;
         just.with(s).each(p).call(setText);
 
-        requestAnimationFrame(function () {
+        wait(function () {
             expect(root.innerHTML).toBe(r);
             done();
         });
@@ -582,5 +585,32 @@ describe('Just', function () {
                 el.textContent = val[0];
             }
         }
+    });
+
+    it('de-bounces using setTimeout()', function (done) {
+        var r = '<i class="e1">c</i><i class="e1">d</i>';
+        var h = '<i class="e1"> </i>';
+        var d = {x: {y: ['c', 'd']}};
+        var p = 'x.y.';
+        var s = 'e1';
+
+        just.data(d);
+        root.innerHTML = h;
+        just.with(s).each(p).call(setText);
+
+        function setText(val) {
+            return function (el) {
+                el.textContent = val[0];
+            }
+        }
+
+        setTimeout(function () {
+            expect(root.innerHTML).toBe(h);
+
+            wait(function () {
+                expect(root.innerHTML).toBe(r);
+                done();
+            });
+        });
     });
 });
