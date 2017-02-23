@@ -155,8 +155,8 @@ var Just = (function constructor(rootEl) {
         var arg2Mem = {__proto__: null};
 
         isRendering = true;
-        cancelAnimationFrame(render.$frame);
-        render.$frame = requestAnimationFrame(recurse.bind(null, 0));
+        clearTimeout(render.$timeout);
+        render.$timeout = setTimeout(recurse.bind(null, 0), 80);
 
         // This function first executes all non-HTML-bound functions,
         // then renders the view.
