@@ -1,7 +1,5 @@
 # just.js
-<<<<<<< HEAD
-Javascript data binding. Nothing more. Nothing less.
-=======
+
 A small data binding library. Nothing more, nothing less.
 
 ###Usage
@@ -24,7 +22,7 @@ Define your HTML view.
 
 Define data.
 ```javascript
-Just.use({
+Just.data({
     todos: {
         next: '',
         list: ['stay calm', 'return stapler']
@@ -32,33 +30,44 @@ Just.use({
 })
 ```
 
-Describe bindings via dot-notation and CSS selectors.
+Describe bindings using classes names, dot-notation, and decorators.
 ```javascript
-Just.bind('todos.list') .to('.todo');
-Just.bind('todos.list') .to('.todo-text');
-Just.bind('todos.list') .to('.todo-status')    .as(status);
-Just.bind('todos.next') .to('.next-todo-text') .as(text);
-Just.bind('todos')      .to('.add-todo')       .as(addButton);
-
-function status(i, list) {
-    return function(elem) {
-        elem.checked = false;
-        elem.onchange = function() { list.splice(i, 1) };
-    }
-}
-
-function text(i, list) {
-    return function(elem) {
-        elem.oninput = function() { list[i] = elem.value };
-        if (document.activeElement !== elem) elem.value = list[i];
-    }
-}
-
-function addButton(todos) {
-    return function(elem) {
-        elem.onclick = function() { todos.list.push(todos.next) };
-    }
-}
+Just.with('todo')
+    .each('todos.list.');
+    
+Just.with('todo-text')
+    .each('todos.list.');
+    
+Just.with('todo-status')
+    .each('todos.list')
+    .each('todos.list.')
+    .call(function status(val, key) {
+        return function(el) {
+          el.checked = false;
+          el.onchange = function() { val[0].splice(key[1], 1) };
+        }
+    });
+    
+Just.with('next-todo-text')
+    .each('todos.next')
+    .call(function text(val, key) {
+        return function(el) {
+            el.oninput = function() { val[0] = el.value };
+            if (document.activeElement !== el) el.value = val[0];
+        }
+    });
+    
+Just.with('add-todo')
+    .each('todos.list')
+    .each('todos.next')
+    .call(function addButton(val) {
+        return function(el) {
+            el.onclick = function() { 
+                val[0].push(val[1]);
+                Just.render();
+            };
+        }
+    });
 ```
 
 ###Guiding Principles
@@ -66,4 +75,3 @@ function addButton(todos) {
 1. 100% of `just.js`'s code is exercised by every page where it is used.
 1. `just.js` doesn't require any third-party-fameworks.
 1. `just.js` doesn't require any special HTML markup.
->>>>>>> origin/NGDC-1993
