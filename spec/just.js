@@ -1,15 +1,13 @@
 describe('Just', function () {
-    var root;
-    var just;
-
-    beforeEach(function () {
-        root = document.querySelector('#jasmine_fixture');
-        just = new Just(root);
-    });
+    var root = document.querySelector('#jasmine_fixture');
 
     function wait(func) {
         return setTimeout(func, 80);
     }
+
+    beforeEach(function () {
+        Just = new Just(root);
+    });
 
     it('duplicates elements according to data', function (done) {
         var r = '<i class="e1"></i><i class="e1"></i>';
@@ -18,9 +16,9 @@ describe('Just', function () {
         var p = 'a.b.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p);
+        Just.with(s).each(p);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -35,9 +33,9 @@ describe('Just', function () {
         var p = 'x.y.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
+        Just.with(s).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -58,9 +56,9 @@ describe('Just', function () {
         var p = 'x.y.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
+        Just.with(s).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -82,9 +80,9 @@ describe('Just', function () {
         var p2 = 'x.b.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p1).each(p2).call(setHTML);
+        Just.with(s).each(p1).each(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -107,9 +105,9 @@ describe('Just', function () {
         var p3 = 'x.c.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p1).each(p2).each(p3).call(setHTML);
+        Just.with(s).each(p1).each(p2).each(p3).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -131,9 +129,9 @@ describe('Just', function () {
         var p2 = 'x.b.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p1).each(p2).call(setHTML);
+        Just.with(s).each(p1).each(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -155,9 +153,9 @@ describe('Just', function () {
         var p2 = 'x.b.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p1).some(p2).call(setHTML);
+        Just.with(s).each(p1).some(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -179,10 +177,10 @@ describe('Just', function () {
         var s1 = 'e1';
         var s2 = 'e2';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s1).each(p).call(setHTML);
-        just.with(s2).each(p).call(setHTML);
+        Just.with(s1).each(p).call(setHTML);
+        Just.with(s2).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -202,9 +200,9 @@ describe('Just', function () {
         var p = 'x.y.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p);
+        Just.with(s).each(p);
         root.firstChild.focus();
         expect(root.firstChild).toBe(document.activeElement);
 
@@ -224,11 +222,11 @@ describe('Just', function () {
         var s2 = 'e2';
         var s3 = 'e3';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s1).each(p1);
-        just.with(s2).each(p1).each(p2);
-        just.with(s3).each(p1).each(p2).call(setHTML);
+        Just.with(s1).each(p1);
+        Just.with(s2).each(p1).each(p2);
+        Just.with(s3).each(p1).each(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -250,10 +248,10 @@ describe('Just', function () {
         var p2 = 'w';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.each(p1).each(p2).call(addVal);
-        just.with(s).each(p2).call(setHTML);
+        Just.each(p1).each(p2).call(addVal);
+        Just.with(s).each(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -281,11 +279,11 @@ describe('Just', function () {
         var p3 = 'x.y.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.each(p1).call(addVal);
-        just.each(p2).init(addVal);
-        just.with(s).each(p3).call(setHTML);
+        Just.each(p1).call(addVal);
+        Just.each(p2).init(addVal);
+        Just.with(s).each(p3).call(setHTML);
 
         function addVal(val, key) {
             val[0] += 1;
@@ -294,7 +292,7 @@ describe('Just', function () {
         function setHTML(val, key) {
             return function (e1) {
                 e1.innerHTML = val[0];
-                e1.onclick = just.render;
+                e1.onclick = Just.render;
             };
         }
 
@@ -317,10 +315,10 @@ describe('Just', function () {
         var s1 = 'e1';
         var s2 = 'e2';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s1).each(p).call(setHTML);
-        just.with(s2).each(p).call(filterOdd);
+        Just.with(s1).each(p).call(setHTML);
+        Just.with(s2).each(p).call(filterOdd);
 
         function filterOdd(val, key) {
             if (val[0] % 2) return function (e1) {
@@ -349,10 +347,10 @@ describe('Just', function () {
         var s1 = 'e1';
         var s2 = 'e2';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s1).each(p1).each(p2).call(setHTML);
-        just.with(s2).each(p1).each(p2).call(filterOut);
+        Just.with(s1).each(p1).each(p2).call(setHTML);
+        Just.with(s2).each(p1).each(p2).call(filterOut);
 
         function filterOut(val, key) {
             if (val[0] % val[1]) return function () {}
@@ -362,7 +360,7 @@ describe('Just', function () {
             return function (e1) {
                 e1.innerHTML = val[0];
                 e1.onclick = function () {
-                    just.render();
+                    Just.render();
                     val[1] = 2
                 }
             }
@@ -387,10 +385,10 @@ describe('Just', function () {
         var p2 = 'a.c.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p1).call(setHTML);
-        just.with(s).each(p2).call(setHTML);
+        Just.with(s).each(p1).call(setHTML);
+        Just.with(s).each(p2).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -413,12 +411,12 @@ describe('Just', function () {
         var p2 = 'z';
         var s = 'e1';
 
-        just.data(d1);
+        Just.data(d1);
         root.innerHTML = h;
-        just.each(p1).each(p2).init(initBindings);
+        Just.each(p1).each(p2).init(initBindings);
 
         function initBindings(val, key) {
-            just.with(s).each(val[0]).each(val[1]).call(setHTML);
+            Just.with(s).each(val[0]).each(val[1]).call(setHTML);
         }
 
         function setHTML(val, key) {
@@ -429,7 +427,7 @@ describe('Just', function () {
 
         wait(function () {
             expect(root.innerHTML).toBe(h);
-            just.data(d2);
+            Just.data(d2);
 
             wait(function () {
                 expect(root.innerHTML).toBe(r);
@@ -445,9 +443,9 @@ describe('Just', function () {
         var p = 'a.b.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
+        Just.with(s).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -468,9 +466,9 @@ describe('Just', function () {
         var p = 'a.b';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setHTML);
+        Just.with(s).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -494,9 +492,9 @@ describe('Just', function () {
         var s2 = 'e2';
         var p0 = 'a';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.each(p0).init(addBindings);
+        Just.each(p0).init(addBindings);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -504,8 +502,8 @@ describe('Just', function () {
         });
 
         function addBindings() {
-            just.each(p2).call(increment);
-            just.with(s1).each(p1).call(setHTML);
+            Just.each(p2).call(increment);
+            Just.with(s1).each(p1).call(setHTML);
         }
 
         function increment(val) {
@@ -517,7 +515,7 @@ describe('Just', function () {
                 var o = val[0];
                 e1.innerHTML = val[0];
                 if (typeof o !== 'string') return;
-                just.with(s2).each(p2).call(setHTML);
+                Just.with(s2).each(p2).call(setHTML);
             }
         }
     });
@@ -548,9 +546,9 @@ describe('Just', function () {
         var p = 'a';
         var r = 'b';
 
-        just.data(d);
+        Just.data(d);
         root.classList.add('root');
-        just.with(s).each(p).call(setHTML);
+        Just.with(s).each(p).call(setHTML);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -571,9 +569,9 @@ describe('Just', function () {
         var p = 'a..';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setText);
+        Just.with(s).each(p).call(setText);
 
         wait(function () {
             expect(root.innerHTML).toBe(r);
@@ -594,9 +592,9 @@ describe('Just', function () {
         var p = 'x.y.';
         var s = 'e1';
 
-        just.data(d);
+        Just.data(d);
         root.innerHTML = h;
-        just.with(s).each(p).call(setText);
+        Just.with(s).each(p).call(setText);
 
         function setText(val) {
             return function (el) {
@@ -609,6 +607,43 @@ describe('Just', function () {
 
             wait(function () {
                 expect(root.innerHTML).toBe(r);
+                done();
+            });
+        });
+    });
+
+    it('should support conversion pattern', function (done) {
+        var r1 = '<i class="e1">123</i><i class="e1">456</i><i class="e1">789</i>';
+        var r2 = '<i class="e1">abc</i><i class="e1">def</i><i class="e1">ghi</i>';
+        var d1 = {x: {y: '123,456,789', z: []}};
+        var d2 = {x: {y: 'abc,def,ghi'}};
+        var h = '<i class="e1"> </i>';
+        var p3 = 'x.z.';
+        var p2 = 'x.z';
+        var p1 = 'x.y';
+        var s = 'e1';
+
+        Just.data(d1);
+        root.innerHTML = h;
+        Just.with(s).each(p3).call(setText);
+        Just.each(p1).each(p2).call(convert);
+
+        function convert(val) {
+            val[1] = val[0].split(',');
+        }
+
+        function setText(val) {
+            return function (el) {
+                el.textContent = val[0];
+            }
+        }
+
+        wait(function () {
+            expect(root.innerHTML).toBe(r1);
+            Just.data(d2);
+
+            wait(function () {
+                expect(root.innerHTML).toBe(r2);
                 done();
             });
         });
